@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Shop</title>
+</head>
+<body>
+<h1 th:text="#{title}"></h1>
+<form method="post" th:object="${paymentRequest}">
+    <div>
+        <label for="value" th:text="#{valueLabel}"></label>
+        <input id="value" th:field="*{value}">
+        <p th:if="${#fields.hasErrors('value')}" th:text="#{invalidPaymentValue}"></p>
+    </div>
+    <button type="submit" th:text="#{sendButton}"></button>
+</form>
+</body>
+</html>

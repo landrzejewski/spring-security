@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Shop</title>
+</head>
+<body>
+<h1 th:text="#{title}"></h1>
+<div>
+    <span th:text="${payment.value}"></span>
+    <span th:text="${payment.status}"></span>
+</div>
+<a href="/index.html" th:text="#{menuLink}"></a>
+</body>
+</html>

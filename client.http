@@ -1,0 +1,20 @@
+POST http://localhost:8080/api/payments
+Accept: application/json
+Content-Type: application/json
+
+{
+  "id": 1,
+  "value": "1 PLN"
+}
+
+###
+
+GET http://localhost:8080/api/payments/bc8730dd-1dd6-4d9d-9809-04e7f7629577
+Accept: application/json
+Content-Type: application/json
+
+###
+
+GET http://localhost:8080/api/payments/started?pageSize=10
+Accept: application/json
+Content-Type: application/json
