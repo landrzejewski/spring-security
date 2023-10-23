@@ -15,6 +15,6 @@ kiedy użytkownik nie jest zalogowany, filtr powinien o tym poinformować
 - Rozszerz komponenty Spring Security tak, aby możliwe było uwierzytelnianie i autoryzacja
 użytkowników na podstawie tokenów jwt. Użyj biblioteki com.auth0:java-jwt:4.3.0
 
-- Zaimplementuj usługę rest, zwracającą dane załadowane z zaszyfrowanych plików csv. Przed zwróceniem 
+- Zaimplementuj usługę rest, zwracającą dane z zaszyfrowanych plików csv. Przed zwróceniem 
 dane powinny być przefiltrowane ze względu na treść oraz rolę użytkownika (JPA QL expressions, adnotacje).
 Dostęp do endpointów rest zabezpiecz z wykorzystaniem protokołu OpenID (Spring, Keycloak). 
