@@ -1,15 +1,24 @@
 package pl.training.shop.security;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
-import org.springframework.security.provisioning.UserDetailsManager;
+import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 
-import javax.sql.DataSource;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.Map;
+
+import static org.springframework.security.config.Customizer.withDefaults;
+import static org.springframework.security.core.context.SecurityContextHolder.MODE_INHERITABLETHREADLOCAL;
 
 @Configuration
 public class SecurityConfiguration {
@@ -29,16 +38,26 @@ public class SecurityConfiguration {
     SecurityContextHolder securityContextHolder; // Przechowuje/udostępnia SecurityContext
         SecurityContext securityContext; // Kontener przechowujący Authentication
             Authentication authentication; // Reprezentuje dane uwierzytelniające jak i uwierzytelnionego użytkownika/system
-                UserDetails userDetails; // Interfejs/kontrakt opisujący użytkownika
-                GrantedAuthority grantedAuthority; // Interfejs/kontrakt opisujący role/uprawnienia
-                    SimpleGrantedAuthority simpleGrantedAuthority; // Jedna z implementacji SimpleGrantedAuthority
+                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken; // Jedna z implementacji Authentication, zawiera login i hasło jako credentials
+                    UserDetails userDetails; // Interfejs/kontrakt opisujący użytkownika
+                    GrantedAuthority grantedAuthority; // Interfejs/kontrakt opisujący role/uprawnienia
+                        SimpleGrantedAuthority simpleGrantedAuthority; // Jedna z implementacji SimpleGrantedAuthority
 
     AuthorizationManager authorizationManager; // Interfejs/kontrakt dla procesu autoryzacji
         AuthoritiesAuthorizationManager authoritiesAuthorizationManager; // Jedna z implementacji AuthorizationManager (role)*/
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance(); //deprecated
+    public PasswordEncoder passwordEncoder() throws NoSuchAlgorithmException {
+        var planText = NoOpPasswordEncoder.getInstance(); //deprecated
+        var bcrypt = new BCryptPasswordEncoder(10, SecureRandom.getInstanceStrong());
+        var scrypt = new SCryptPasswordEncoder(16384, 8, 1, 32, 64);
+
+        Map<String, PasswordEncoder> encoders = Map.of(
+                "noop", planText,
+                "bcrypt", bcrypt,
+                "scrypt", scrypt
+        );
+        return new DelegatingPasswordEncoder("bcrypt", encoders);
     }
 
     /*@Bean
@@ -59,5 +78,40 @@ public class SecurityConfiguration {
         // manager.setAuthoritiesByUsernameQuery("select username, authority from authorities where username = ?");
         return manager;
     }*/
+
+    @Bean
+    public InitializingBean initializingBean() {
+    /*
+        MODE_THREADLOCAL — Allows each thread to store its own details in the security context.
+        In a thread-per-request web application, this is a common approach as each request has an individual thread.
+        MODE_INHERITABLETHREADLOCAL — Similar to MODE_THREADLOCAL but also instructs Spring Security to copy the
+        security context to the next thread in case of an asynchronous/@Async method
+        MODE_GLOBAL — Makes all the threads of the application see the same security context instance
+     */
+        return () -> SecurityContextHolder.setStrategyName(MODE_INHERITABLETHREADLOCAL);
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity
+                .csrf(config -> config.ignoringRequestMatchers("/api/**"))
+                //.httpBasic(withDefaults())
+                /*.httpBasic(config -> config
+                        .realmName("training")
+                        .authenticationEntryPoint(new CustomEntryPoint())
+                )*/
+                //.formLogin(withDefaults())
+                .formLogin(config -> config
+                        .loginPage("/login.html")
+                        .defaultSuccessUrl("/index.html")
+                        //.usernameParameter("username")
+                        //.passwordParameter("password")
+                )
+                .authorizeHttpRequests(config -> config
+                        .requestMatchers("/login.html").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .build();
+    }
 
 }
