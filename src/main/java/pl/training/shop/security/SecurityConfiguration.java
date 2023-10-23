@@ -28,7 +28,7 @@ import java.util.Map;
 import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.core.context.SecurityContextHolder.MODE_INHERITABLETHREADLOCAL;
 
-@EnableWebSecurity(debug = true)
+//@EnableWebSecurity(debug = true)
 @Configuration
 public class SecurityConfiguration {
 
@@ -138,12 +138,6 @@ public class SecurityConfiguration {
                         //.requestMatchers("/**").access((authentication, object) -> new AuthorizationDecision(true))
                         .requestMatchers("/**").authenticated()
                 )
-                .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> {
-                    httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint((request, response, authException) -> {
-                        authException.printStackTrace();
-
-                    });
-                })
                 .build();
     }
 
