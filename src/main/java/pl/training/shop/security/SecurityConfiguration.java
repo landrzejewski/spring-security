@@ -109,7 +109,7 @@ public class SecurityConfiguration {
                // .addFilterBefore(new DepartmentValidatorFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(customAuthenticationFilter, AnonymousAuthenticationFilter.class)
                 .csrf(config -> config.ignoringRequestMatchers("/api/**"))
-                .anonymous(AbstractHttpConfigurer::disable)
+                //.anonymous(AbstractHttpConfigurer::disable)
                 .httpBasic(withDefaults())
                 /*.httpBasic(config -> config
                         .realmName("training")
@@ -130,7 +130,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(config -> config
                         .requestMatchers("/login.html").permitAll()
                         //.requestMatchers("/api/payments/{id:^\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}$}")
-                        //    .hasAnyRole("ADMIN", "MANAGER")
+                            //.hasAnyRole("ADMIN", "MANAGER")
                             //.hasAuthority("read")
                             //.hasRole("ADMIN")
                         //.requestMatchers("/**").authenticated()
