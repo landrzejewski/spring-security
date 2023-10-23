@@ -1,4 +1,4 @@
-package pl.training.shop.security;
+package pl.training.shop.security.users;
 
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
