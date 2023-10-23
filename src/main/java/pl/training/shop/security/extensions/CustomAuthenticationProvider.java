@@ -1,4 +1,4 @@
-package pl.training.shop.security;
+package pl.training.shop.security.extensions;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -21,20 +21,24 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        var username = authentication.getName();
-        var password = authentication.getCredentials().toString();
-
-        var user = userDetailsService.loadUserByUsername(username);
-        if (passwordEncoder.matches(password, user.getPassword())) {
-            return UsernamePasswordAuthenticationToken.authenticated(user, EMPTY, user.getAuthorities());
-        } else {
-            throw new BadCredentialsException("Invalid username or password");
+        if (authentication instanceof PlainAuthentication plainAuthentication) {
+            var username = plainAuthentication.getLogin();
+            var password = plainAuthentication.getPassword();
+            var user = userDetailsService.loadUserByUsername(username);
+            if (passwordEncoder.matches(password, user.getPassword())) {
+                var token = UsernamePasswordAuthenticationToken.authenticated(user, EMPTY, user.getAuthorities());
+                token.setDetails(user);
+                return token;
+            } else {
+                throw new BadCredentialsException("Invalid username or password");
+            }
         }
+        return null;
     }
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
+        return PlainAuthentication.class.isAssignableFrom(authentication);
     }
 
 }

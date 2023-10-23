@@ -1,10 +1,13 @@
 package pl.training.shop.security;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
@@ -12,6 +15,11 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import pl.training.shop.security.extensions.CustomAuthenticationFilter;
+import pl.training.shop.security.extensions.DepartmentValidatorFilter;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -20,6 +28,7 @@ import java.util.Map;
 import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.core.context.SecurityContextHolder.MODE_INHERITABLETHREADLOCAL;
 
+@EnableWebSecurity(debug = true)
 @Configuration
 public class SecurityConfiguration {
 
@@ -91,26 +100,50 @@ public class SecurityConfiguration {
         return () -> SecurityContextHolder.setStrategyName(MODE_INHERITABLETHREADLOCAL);
     }
 
+    @Autowired
+    CustomAuthenticationFilter customAuthenticationFilter;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
+               // .addFilterBefore(new DepartmentValidatorFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(customAuthenticationFilter, AnonymousAuthenticationFilter.class)
                 .csrf(config -> config.ignoringRequestMatchers("/api/**"))
-                //.httpBasic(withDefaults())
+                .anonymous(AbstractHttpConfigurer::disable)
+                .httpBasic(withDefaults())
                 /*.httpBasic(config -> config
                         .realmName("training")
                         .authenticationEntryPoint(new CustomEntryPoint())
                 )*/
                 //.formLogin(withDefaults())
                 .formLogin(config -> config
-                        .loginPage("/login.html")
+                        .loginPage("/login.html") // login is default
                         .defaultSuccessUrl("/index.html")
                         //.usernameParameter("username")
                         //.passwordParameter("password")
                 )
+                .logout(config -> config
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout.html")) // logout is default
+                        .logoutSuccessUrl("/login.html")
+                        .invalidateHttpSession(true)
+                )
                 .authorizeHttpRequests(config -> config
                         .requestMatchers("/login.html").permitAll()
-                        .anyRequest().authenticated()
+                        //.requestMatchers("/api/payments/{id:^\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}$}")
+                        //    .hasAnyRole("ADMIN", "MANAGER")
+                            //.hasAuthority("read")
+                            //.hasRole("ADMIN")
+                        //.requestMatchers("/**").authenticated()
+                        //.anyRequest().access(new WebExpressionAuthorizationManager("hasAuthority('WRITE')"))
+                        //.requestMatchers("/**").access((authentication, object) -> new AuthorizationDecision(true))
+                        .requestMatchers("/**").authenticated()
                 )
+                .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> {
+                    httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint((request, response, authException) -> {
+                        authException.printStackTrace();
+
+                    });
+                })
                 .build();
     }
 

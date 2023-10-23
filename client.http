@@ -21,11 +21,14 @@ Content-Type: application/json
 Authorization: Basic YWRtaW5AdHJhaW5pbmcucGw6YWRtaW4=
 
 ###
-
+//@no-cookie-jar
+//@no-redirect
 GET http://localhost:8080/api/users/me
 Accept: application/json
 Content-Type: application/json
-Authorization: Basic YWRtaW5AdHJhaW5pbmcucGw6YWRtaW4=
+#Authorization: Basic YWRtaW5AdHJhaW5pbmcucGw6YWRtaW4=
+Authorization: Plain admin@training.pl admin
+Department: devs
 
 ###
 
@@ -33,3 +36,4 @@ GET http://localhost:8080/api/users/async-task
 Accept: application/json
 Content-Type: application/json
 Authorization: Basic YWRtaW5AdHJhaW5pbmcucGw6YWRtaW4=
+

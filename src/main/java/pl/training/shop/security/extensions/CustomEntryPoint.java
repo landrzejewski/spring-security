@@ -1,4 +1,4 @@
-package pl.training.shop.security;
+package pl.training.shop.security.extensions;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
