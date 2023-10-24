@@ -17,7 +17,11 @@ openssl pkcs12 -export -in cert.pem -inkey key.pem -out certificate.p12 -name "c
 kiedy użytkownik nie jest zalogowany, filtr powinien o tym poinformować
 
 - Rozszerz komponenty Spring Security tak, aby możliwe było uwierzytelnianie i autoryzacja
-użytkowników na podstawie tokenów jwt. Użyj biblioteki com.auth0:java-jwt:4.3.0
+użytkowników na podstawie tokenów jwt. Użyj biblioteki https://github.com/auth0/java-jwt 
+Wykorzystaj poniższy algorytm do podpisania tokenu.
+```
+public static final Algorithm ALGORITHM = Algorithm.HMAC256("secret");
+```
 
 - Zaimplementuj usługę rest, zwracającą dane z zaszyfrowanych plików csv. Przed zwróceniem 
 dane powinny być przefiltrowane ze względu na treść oraz rolę użytkownika (JPA QL expressions, adnotacje).

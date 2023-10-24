@@ -16,7 +16,7 @@ import java.io.IOException;
 import static jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
-@Component
+//@Component
 @RequiredArgsConstructor
 public class CustomAuthenticationFilter extends OncePerRequestFilter {
 

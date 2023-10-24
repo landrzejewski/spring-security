@@ -10,11 +10,14 @@ import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import pl.training.shop.security.extensions.CustomAuthenticationFilter;
 import pl.training.shop.security.extensions.CustomAuthorizationManager;
+import pl.training.shop.security.jwt.JwtAuthenticationFilter;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -96,11 +99,12 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, CustomAuthenticationFilter customAuthenticationFilter,
-                                                   CustomAuthorizationManager customAuthorizationManager) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, /*CustomAuthenticationFilter customAuthenticationFilter,*/
+                                                   CustomAuthorizationManager customAuthorizationManager, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         return httpSecurity
                 // .addFilterBefore(new DepartmentValidatorFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(customAuthenticationFilter, AnonymousAuthenticationFilter.class)
+                //.addFilterAfter(customAuthenticationFilter, AnonymousAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .csrf(config -> config.ignoringRequestMatchers("/api/**"))
                 //.anonymous(AbstractHttpConfigurer::disable)
                 .httpBasic(withDefaults())
@@ -114,6 +118,8 @@ public class SecurityConfiguration {
                                 .defaultSuccessUrl("/index.html")
                         //.usernameParameter("username")
                         //.passwordParameter("password")
+                        //.successHandler(implementacja AuthenticationSuccessHandler)
+                        //.failureHandler(implementacja CustomAuthenticationFailureHandler)
                 )
                 .logout(config -> config
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout.html")) // logout is default
@@ -122,6 +128,7 @@ public class SecurityConfiguration {
                 )
                 .authorizeHttpRequests(config -> config
                         .requestMatchers("/login.html").permitAll()
+                        .requestMatchers("/api/tokens").permitAll()
                         //.requestMatchers("/api/payments/{id:^\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}$}")
                         //.hasAnyRole("ADMIN", "MANAGER")
                         //.hasAuthority("read")
@@ -129,8 +136,14 @@ public class SecurityConfiguration {
                         //.requestMatchers("/**").authenticated()
                         //.anyRequest().access(new WebExpressionAuthorizationManager("hasAuthority('WRITE')"))
                         //.requestMatchers("/**").access((authentication, object) -> new AuthorizationDecision(true))
-                        .requestMatchers("/**").access(customAuthorizationManager)
+                        //.requestMatchers("/**").access(customAuthorizationManager)
+                        .anyRequest().hasRole("ADMIN")
                 )
+                /*.exceptionHandling(config -> config
+                        //.authenticationEntryPoint(implementacja AuthenticationEntryPoint)
+                        //.accessDeniedHandler(implementacja AccessDeniedHandler)
+                        //.accessDeniedPage("/access-denied.html")
+                )*/
                 .build();
     }
 
