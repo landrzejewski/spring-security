@@ -10,11 +10,12 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -36,6 +37,11 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(config -> config
                         .anyRequest().hasRole("ADMIN")
                 )
+                .logout(config -> config
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout.html"))
+                        .addLogoutHandler(new KeycloakLogoutHandler(new RestTemplate()))
+                        .logoutSuccessUrl("/index.html")
+                )
                 .build();
     }
 
@@ -49,11 +55,11 @@ public class SecurityConfiguration {
     private static final String ROLES_CLAIM = "roles";
     private static final String ROLE_PREFIX = "ROLE_";
 
-    // Client scopes -> Client scope details -> Mapper details -> Add to userinfo enabled (Keycloak Admin console)
+    // Client scopes -> Client scope details (roles) -> Mapper details -> Add to userinfo enabled (Keycloak Admin console)
     @SuppressWarnings("unchecked")
     private void oauth2LoginConfig(UserInfoEndpointConfig config) {
         config.userAuthoritiesMapper(authorities -> {
-            Set<String> grantedAuthorities = new HashSet<>();
+            var grantedAuthorities = new HashSet<String>();
             authorities.forEach(authority -> {
                 if (authority instanceof OidcUserAuthority oidcUserAuthority) {
                     var userInfo = oidcUserAuthority.getUserInfo();
