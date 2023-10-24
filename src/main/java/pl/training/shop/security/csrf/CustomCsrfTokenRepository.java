@@ -2,6 +2,8 @@ package pl.training.shop.security.csrf;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.crypto.encrypt.Encryptors;
+import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.DefaultCsrfToken;
@@ -55,4 +57,30 @@ public class CustomCsrfTokenRepository implements CsrfTokenRepository {
 
         return null;
     }
+
+    public void test() {
+        // Spring Security Crypto module
+        var keyGenerator = KeyGenerators.string();
+        var salt = keyGenerator.generateKey();
+
+        var keyGenerator2 = KeyGenerators.secureRandom(16);
+        byte[] key = keyGenerator2.generateKey();
+        int keyLength = keyGenerator2.getKeyLength();
+
+        var keyGenerator3 = KeyGenerators.shared(16);
+        byte[] key1 = keyGenerator3.generateKey();
+        byte[] key2 = keyGenerator3.generateKey();
+
+        String valueToEncrypt = "HELLO";
+        var encryptor = Encryptors.standard("secret", KeyGenerators.string().generateKey()); //  256-byte AES
+        // = Encryptors.stronger(password, salt);
+        byte[] encrypted = encryptor.encrypt(valueToEncrypt.getBytes());
+        byte[] decrypted = encryptor.decrypt(encrypted);
+
+
+        var textEncryptor = Encryptors.text("secret", KeyGenerators.string().generateKey());
+        String encrypted2 = textEncryptor.encrypt(valueToEncrypt);
+        String decrypted2 = textEncryptor.decrypt(encrypted2);
+    }
+
 }
