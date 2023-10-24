@@ -21,12 +21,12 @@ Content-Type: application/json
 Authorization: Basic YWRtaW5AdHJhaW5pbmcucGw6YWRtaW4=
 
 ###
-GET http://localhost:8080/api/users/me
+GET https://localhost:8080/api/users/me
 Accept: application/json
 Content-Type: application/json
 #Authorization: Basic YWRtaW5AdHJhaW5pbmcucGw6YWRtaW4=
 #Authorization: Plain admin@training.pl admin
-Authorization: bearer {{token}}
+Authorization: bearer {{tokenEntity}}
 Department: devs
 
 ###
@@ -38,7 +38,7 @@ Authorization: Basic YWRtaW5AdHJhaW5pbmcucGw6YWRtaW4=
 
 ###
 
-POST http://localhost:8080/api/tokens
+POST https://localhost:8080/api/tokens
 Accept: application/json
 Content-Type: application/json
 
@@ -48,5 +48,5 @@ Content-Type: application/json
 }
 
 > {%
-    client.global.set('token', response.body.token);
+    client.global.set('tokenEntity', response.body.tokenEntity);
 %}

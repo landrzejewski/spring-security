@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 
-@Component
+//@Component
 public class CustomAuthorizationManager implements AuthorizationManager<RequestAuthorizationContext> {
 
     private final Map<String, Set<String>> mappings = Map.of(

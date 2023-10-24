@@ -10,6 +10,7 @@
     <div>
         <label for="value" th:text="#{valueLabel}"></label>
         <input id="value" th:field="*{value}">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
         <p th:if="${#fields.hasErrors('value')}" th:text="#{invalidPaymentValue}"></p>
     </div>
     <button type="submit" th:text="#{sendButton}"></button>

@@ -27,7 +27,7 @@ public class JwtLoginRestController {
                 .withIssuer(ISSUER)
                 .withClaim(USER_CLAIM, user.getEmail())
                 .withClaim(ROLE_CLAIM, user.getRole())
-                .withExpiresAt(Instant.now().plus(1, SECONDS))
+                .withExpiresAt(Instant.now().plus(3600, SECONDS))
                 .sign(ALGORITHM);
         return new JwtDto(token);
     }

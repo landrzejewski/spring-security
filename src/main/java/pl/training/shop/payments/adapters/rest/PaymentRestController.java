@@ -13,6 +13,7 @@ import pl.training.shop.payments.ports.PaymentService;
 
 import static pl.training.shop.payments.domain.PaymentStatus.STARTED;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/api/payments")
 @RestController
 @RequiredArgsConstructor

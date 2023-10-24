@@ -1,7 +1,11 @@
 package pl.training.shop.payments.adapters.web;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -28,6 +32,12 @@ public class PaymentWebController {
         return "payments/payment-form";
     }
 
+    //@PreFilter("filterObject.owner == authentication.name") // can be uses on jpa repositories its better to use spel
+    //@PostFilter("filterObject.owner == authentication.name")
+    //@PreAuthorize("#paymentRequestViewModel.value > 10")
+    //@PostAuthorize("returnObject.contains('payment-summary')")
+    //@Secured("ROLE_SUPER_ADMIN")
+    //@RolesAllowed("SUPER_ADMIN")
     @PostMapping("process")
     public String process(@Valid @ModelAttribute("paymentRequest") PaymentRequestViewModel paymentRequestViewModel,
                           BindingResult bindingResult,

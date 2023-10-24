@@ -3,6 +3,7 @@ package pl.training.shop.security;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -10,23 +11,25 @@ import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
-import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.data.repository.query.SecurityEvaluationContextExtension;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import pl.training.shop.security.extensions.CustomAuthenticationFilter;
-import pl.training.shop.security.extensions.CustomAuthorizationManager;
-import pl.training.shop.security.jwt.JwtAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import pl.training.shop.security.csrf.CustomCsrfTokenRepository;
+import pl.training.shop.security.users.JpaUserDetailService;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.List;
 import java.util.Map;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.core.context.SecurityContextHolder.MODE_INHERITABLETHREADLOCAL;
 
 //@EnableWebSecurity(debug = true)
+@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true/*, prePostEnabled = true*/)
 @Configuration
 public class SecurityConfiguration {
 
@@ -99,14 +102,48 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, /*CustomAuthenticationFilter customAuthenticationFilter,*/
-                                                   CustomAuthorizationManager customAuthorizationManager, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
+    public SecurityEvaluationContextExtension securityEvaluationContextExtension() {
+        return new SecurityEvaluationContextExtension();
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JpaUserDetailService jpaUserDetailService,
+                                                   CustomCsrfTokenRepository csrfTokenRepository) throws Exception {
         return httpSecurity
-                // .addFilterBefore(new DepartmentValidatorFilter(), UsernamePasswordAuthenticationFilter.class)
+                //.addFilterBefore(new DepartmentValidatorFilter(), UsernamePasswordAuthenticationFilter.class)
                 //.addFilterAfter(customAuthenticationFilter, AnonymousAuthenticationFilter.class)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .csrf(config -> config.ignoringRequestMatchers("/api/**"))
+                //.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                //.csrf(config -> config.disable()) // CSRF (Cross-Site Request Forgery)
+                .csrf(config -> {
+                            /*var i = new HandlerMappingIntrospector();
+                            var r = new MvcRequestMatcher(i, "/test");
+                            config.ignoringRequestMatchers(r);*/
+
+                            /*var r = new RegexRequestMatcher(".*[0-9].*", "POST");
+                            config.ignoringRequestMatchers(r);*/
+
+                            config.ignoringRequestMatchers("/api/**");
+
+                            // CsrfToken — Describes the CSRF token itself
+                            // CsrfTokenRepository — Describes the object that creates, stores, and loads CSRF  tokens
+                            // CsrfTokenRequestHandler – Describes and object that manages the way in which the  generated CSRF token is set on the HTTP request.
+
+                            config.csrfTokenRepository(csrfTokenRepository);
+                            config.csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()); // XorCsrfTokenRequestAttributeHandler
+                        }
+                )
+                .cors(config -> {
+                    CorsConfigurationSource source = request -> {
+                        var corsConfig = new CorsConfiguration();
+                        corsConfig.setAllowedOrigins(List.of("example.com", "example.org"));
+                        corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+                        corsConfig.setAllowedHeaders(List.of("*"));
+                        return corsConfig;
+                    };
+                    config.configurationSource(source);
+                })
                 //.anonymous(AbstractHttpConfigurer::disable)
+                .userDetailsService(jpaUserDetailService)
                 .httpBasic(withDefaults())
                 /*.httpBasic(config -> config
                         .realmName("training")
@@ -137,7 +174,7 @@ public class SecurityConfiguration {
                         //.anyRequest().access(new WebExpressionAuthorizationManager("hasAuthority('WRITE')"))
                         //.requestMatchers("/**").access((authentication, object) -> new AuthorizationDecision(true))
                         //.requestMatchers("/**").access(customAuthorizationManager)
-                        .anyRequest().hasRole("ADMIN")
+                        .anyRequest().authenticated()
                 )
                 /*.exceptionHandling(config -> config
                         //.authenticationEntryPoint(implementacja AuthenticationEntryPoint)
