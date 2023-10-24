@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class KeycloakRolesConverter implements Converter<Jwt, Collection<GrantedAuthority>> {
+public class KeycloakJwtGrantedAuthoritiesConverter implements Converter<Jwt, Collection<GrantedAuthority>> {
 
     private static final String REALM_CLAIM = "realm_access";
     private static final String ROLES_CLAIM = "roles";

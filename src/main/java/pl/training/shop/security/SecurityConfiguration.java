@@ -11,14 +11,15 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfiguration {
 
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .csrf(config -> config
                         .ignoringRequestMatchers("/api/**")
                 )
-                .oauth2ResourceServer(config -> config.jwt(this::jwtConfig))
+                .oauth2ResourceServer(config -> config
+                        .jwt(this::jwtConfig)
+                )
                 .authorizeHttpRequests(config -> config
                         .anyRequest().hasRole("ADMIN")
                 )
@@ -27,7 +28,7 @@ public class SecurityConfiguration {
 
     private void jwtConfig(OAuth2ResourceServerConfigurer<HttpSecurity>.JwtConfigurer jwtConfigurer) {
         var converter = new JwtAuthenticationConverter();
-        converter.setJwtGrantedAuthoritiesConverter(new KeycloakRolesConverter());
+        converter.setJwtGrantedAuthoritiesConverter(new KeycloakJwtGrantedAuthoritiesConverter());
         jwtConfigurer.jwtAuthenticationConverter(converter);
     }
 
