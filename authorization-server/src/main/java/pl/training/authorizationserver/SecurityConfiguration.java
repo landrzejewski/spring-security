@@ -39,6 +39,7 @@ import java.util.UUID;
 import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.oauth2.core.AuthorizationGrantType.AUTHORIZATION_CODE;
 import static org.springframework.security.oauth2.core.ClientAuthenticationMethod.CLIENT_SECRET_BASIC;
+import static org.springframework.security.oauth2.core.ClientAuthenticationMethod.NONE;
 import static org.springframework.security.oauth2.core.oidc.OidcScopes.OPENID;
 
 @Configuration
@@ -87,9 +88,9 @@ public class SecurityConfiguration {
                 .withId(UUID.randomUUID().toString())
                 .clientId("shop-client")
                 .clientSecret("secret")
-                .clientAuthenticationMethod(CLIENT_SECRET_BASIC)
+                .clientAuthenticationMethod(NONE)
                 .authorizationGrantType(AUTHORIZATION_CODE)
-                .redirectUri("https://localhost:8443")
+                .redirectUri("http://localhost:8090/authorize")
                 .scope(OPENID)
                 .clientSettings(ClientSettings.builder()
                         .requireProofKey(false)

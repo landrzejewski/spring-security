@@ -49,3 +49,69 @@ client_id=shop-client&grant_type=refresh_token&refresh_token={{ refreshToken }}
     client.global.set('refreshToken', response.body.refresh_token);
 %}
 
+###
+
+GET http://localhost:8090/.well-known/openid-configuration
+
+# authorization_endpoint The authorization endpoint to which a client will redirect the user to authenticate.
+# token_endpoint The token endpoint the client will call to request an access token.
+# jwks_uri  The key set endpoint a resource server will call to get the public keys it can use to validate tokens.
+# introspection_endpoint The introspection endpoint a resource server can call to validate opaque tokens.
+
+###
+
+GET http://localhost:8090/oauth2/authorize?response_type=code&client_id=shop-client&scope=openid&redirect_uri=http://localhost:8090/authorize
+
+#&code_challenge=lDYr1j82HekQDeT-q6J9lYe_CZoBC4LPhNnTGdrub40&code_challenge_method=S256
+
+# response_type=code – this request parameter specifies to the authorization server that
+# the client wants to use the authorization code grant type. Remember that a client might
+# have configured multiple grant types. It needs to tell the authorization server which
+# grant type it wants to use.
+# client_id=client – the client identifier is like the “username” for the user. It uniquily
+# identifies the client in the system.
+# scope=openid – Specifies which scope the client wants to be granted with this
+# authentication attempt.
+# redirect_uri=https://www.manning.com/authorized – Specifies the URI to which the
+# authorization server will redirect after a successful authentication. This URI must be
+# one of those previously configured for the current client.
+# code_challenge=QYPAZ5NU8yvtlQ… - If using the authorization code enhanced with
+# PKCE (discussed in chapter 13), you must provide the code challenge with the
+# authorization request. When requesting the token, the client must send the verifier pair
+# to prove they are the same application that initially sent this request. The PKCE flow is
+# enabled by default.
+# code_challenge_method=S256 – This request parameter specifies which is the hashing
+# method that has been used to create the challenge from the verifier. In this case, S256
+# means SHA-256 was used as a hash function.
+
+###
+
+POST http://localhost:8090/oauth2/token?client_id=shop-client&redirect_uri=http://localhost:8090/authorize&grant_type=authorization_code&code=l72yCcwWcD-fqlAM95d5n8np4L-mzbYZxDnUvUjvPyzFgVuCSG03nkWTUXDbrFbiP1MHAzSdbzcz43l6B_rrcC08eZKZI5YAvkMn4pP_S-9waNRL6We5yFXA0pNZLRZq
+Authorization: Basic Y2xpZW50OnNlY3JldA==
+
+#&code_verifier=885aNTy9fYuTBEF5csGzpE9aVG8khvkrCX_1fx0ypeU
+
+
+# client_id=client – needed to identify the client
+# redirect_uri=the redirect URI through which
+# the authorization server provided the authorization code after the successful user
+# authentication.
+# grant_type=authorization_code – which flow the client uses to request the access token
+# code=ao2oz47zdM0D5…– the value of the authorization code the authorization server
+# provided to the client
+# code_verifier=qPsH306-ZDD… – the verifier based on which the challenge that the client
+# sent at authorization was created.
+
+### client credentials
+
+POST http://localhost:8090/oauth2/token?grant_type=client_credentials&scope=CUSTOM
+Authorization: Basic Y2xpZW50OnNlY3JldA==
+
+### opaue token validation
+POST http://localhost:8080/oauth2/introspect?token=cVT4rvPbGjSHsyzLeflljwfjaGEy1GEpBUfbZcyNBlgSxK7oNGakIgD33IUJU5vL8ugWe6Y7QQDBhVK68pOd0O7lpV-hTqa9g7SDe_k7pj9Y7Viys62hSHXdo9cRECbj
+Authorization: Basic Y2xpZW50OnNlY3JldA==
+
+### token revoke
+
+POST http://localhost:8080/oauth2/revoke?token=cVT4rvPbGjSHsyzLeflljwfjaGEy1GEpBUfbZcyNBlgSxK7oNGakIgD33IUJU5vL8ugWe6Y7QQDBhVK68pOd0O7lpV-hTqa9g7SDe_k7pj9Y7Viys62hSHXdo9cRECbj
+Authorization: Basic Y2xpZW50OnNlY3JldA==
