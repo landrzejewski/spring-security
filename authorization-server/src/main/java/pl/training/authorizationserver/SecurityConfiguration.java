@@ -89,7 +89,7 @@ public class SecurityConfiguration {
     @Bean
     public RegisteredClientRepository registeredClientRepository() {
         // jwt
-        var registeredClient = RegisteredClient
+        /*var registeredClient = RegisteredClient
                 .withId(UUID.randomUUID().toString())
                 .clientId("client")
                 .clientSecret("secret")
@@ -101,13 +101,13 @@ public class SecurityConfiguration {
                 .tokenSettings(TokenSettings.builder()
                         .accessTokenTimeToLive(Duration.ofHours(1))
                         .build())
-                /*.clientSettings(ClientSettings.builder()
+                *//*.clientSettings(ClientSettings.builder()
                         .requireProofKey(false)
-                        .build())*/
-                .build();
+                        .build())*//*
+                .build();*/
 
         // opaque token
-        /*var registeredClient = RegisteredClient
+        var registeredClient = RegisteredClient
                 .withId(UUID.randomUUID().toString())
                 .clientId("client")
                 .clientSecret("secret")
@@ -118,9 +118,16 @@ public class SecurityConfiguration {
                         .accessTokenTimeToLive(Duration.ofHours(1))
                         .build())
                 .scope("CUSTOM")
-                .build();*/
+                .build();
 
-        return new InMemoryRegisteredClientRepository(registeredClient);
+        // verification and revoking
+        var resourceServer = RegisteredClient.withId(UUID.randomUUID().toString())
+                .clientId("resource_server")
+                .clientSecret("resource_server_secret")
+                .clientAuthenticationMethod(CLIENT_SECRET_BASIC)
+                .authorizationGrantType(CLIENT_CREDENTIALS)
+                .build();
+        return new InMemoryRegisteredClientRepository(registeredClient, resourceServer);
     }
 
     @Bean
