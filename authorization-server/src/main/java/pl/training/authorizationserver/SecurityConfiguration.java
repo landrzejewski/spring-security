@@ -24,6 +24,7 @@ import org.springframework.security.oauth2.server.authorization.config.annotatio
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
+import org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
@@ -43,8 +44,10 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.springframework.security.oauth2.core.AuthorizationGrantType.AUTHORIZATION_CODE;
+import static org.springframework.security.oauth2.core.AuthorizationGrantType.CLIENT_CREDENTIALS;
 import static org.springframework.security.oauth2.core.ClientAuthenticationMethod.CLIENT_SECRET_BASIC;
 import static org.springframework.security.oauth2.core.oidc.OidcScopes.OPENID;
+import static org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat.REFERENCE;
 
 @Configuration
 public class SecurityConfiguration {
@@ -85,6 +88,7 @@ public class SecurityConfiguration {
 
     @Bean
     public RegisteredClientRepository registeredClientRepository() {
+        // jwt
         var registeredClient = RegisteredClient
                 .withId(UUID.randomUUID().toString())
                 .clientId("client")
@@ -101,6 +105,20 @@ public class SecurityConfiguration {
                         .requireProofKey(false)
                         .build())*/
                 .build();
+
+        // opaque token
+        /*var registeredClient = RegisteredClient
+                .withId(UUID.randomUUID().toString())
+                .clientId("client")
+                .clientSecret("secret")
+                .clientAuthenticationMethod(CLIENT_SECRET_BASIC)
+                .authorizationGrantType(CLIENT_CREDENTIALS)
+                .tokenSettings(TokenSettings.builder()
+                        .accessTokenFormat(REFERENCE)
+                        .accessTokenTimeToLive(Duration.ofHours(1))
+                        .build())
+                .scope("CUSTOM")
+                .build();*/
 
         return new InMemoryRegisteredClientRepository(registeredClient);
     }
@@ -132,10 +150,10 @@ public class SecurityConfiguration {
             JwtClaimsSet.Builder claims = context.getClaims();
             claims.claim("zone", "secured");
             var principal = context.getPrincipal();
-            Set<String> authorities = principal.getAuthorities().stream()
+            var authorities = principal.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority)
                     .collect(Collectors.toSet());
-            context.getClaims().claim("roles", authorities);
+            context.getClaims().claim("authorities", authorities);
         };
     }
 

@@ -60,7 +60,7 @@ GET http://localhost:8090/.well-known/openid-configuration
 
 ###
 
-GET http://localhost:8090/oauth2/authorize?response_type=code&client_id=client&scope=openid&redirect_uri=http://localhost:8090/authorize&code_challenge=lDYr1j82HekQDeT-q6J9lYe_CZoBC4LPhNnTGdrub40&code_challenge_method=S256
+GET http://localhost:8090/oauth2/authorize?response_type=code&client_id=client&scope=openid&redirect_uri=http://localhost:8090/authorize&code_challenge=dRSCV6VoEIrVF3tMLz33g0FA4jE6SLWdMmxEKZYYF5I&code_challenge_method=S256
 
 # response_type=code – this request parameter specifies to the authorization server that
 # the client wants to use the authorization code grant type. Remember that a client might
@@ -84,7 +84,7 @@ GET http://localhost:8090/oauth2/authorize?response_type=code&client_id=client&s
 
 ###
 
-POST http://localhost:8090/oauth2/token?client_id=client&redirect_uri=http://localhost:8090/authorize&grant_type=authorization_code&code=nHlQGda2XqODlPJM-kyOYMoDL_FU7uMEVZMa3yVauRvuC2ZcvHzQYYAachNyWxghXWudlwJYxq403YSutlJFVHrStuPgDLffbIWtTpLvUil3Ev5mgAi2D3EN1Kx4cSZl&code_verifier=885aNTy9fYuTBEF5csGzpE9aVG8khvkrCX_1fx0ypeU
+POST http://localhost:8090/oauth2/token?client_id=client&redirect_uri=http://localhost:8090/authorize&grant_type=authorization_code&code=hQe9Np88GiG5085TqgBrpYE6jA1QqUGEsoEtLTnvQNaPW3ZApmlx3UX7ImckLdSv0-DynXR1-HZxWUmG4jS4bSuv0M37Twb67vD5qXgblfmbHacynUB3o0YAhtR5YVOg&code_verifier=H05Q8TLWkVz2_uVbgXy8J9LlezXzE2FyCE_rwE4t7h0
 Authorization: Basic Y2xpZW50OnNlY3JldA==
 
 # client_id=client – needed to identify the client
@@ -103,10 +103,10 @@ POST http://localhost:8090/oauth2/token?grant_type=client_credentials&scope=CUST
 Authorization: Basic Y2xpZW50OnNlY3JldA==
 
 ### opaue token validation
-POST http://localhost:8090/oauth2/introspect?token=cVT4rvPbGjSHsyzLeflljwfjaGEy1GEpBUfbZcyNBlgSxK7oNGakIgD33IUJU5vL8ugWe6Y7QQDBhVK68pOd0O7lpV-hTqa9g7SDe_k7pj9Y7Viys62hSHXdo9cRECbj
+POST http://localhost:8090/oauth2/introspect?token=B9GUZc4FB7I6cDhvKKZSHuF2Pvxd5BDYFQNKgMPzlykn1yvDEimitX0i5lVPmno3idFAg7pmgR85WQDTRtGe5KRwlMpFxxMJkAL03IjDGuSp_iZ3aWUuZ4YzasPlsbVq
 Authorization: Basic Y2xpZW50OnNlY3JldA==
 
 ### token revoke
 
-POST http://localhost:8090/oauth2/revoke?token=cVT4rvPbGjSHsyzLeflljwfjaGEy1GEpBUfbZcyNBlgSxK7oNGakIgD33IUJU5vL8ugWe6Y7QQDBhVK68pOd0O7lpV-hTqa9g7SDe_k7pj9Y7Viys62hSHXdo9cRECbj
+POST http://localhost:8090/oauth2/revoke?token=B9GUZc4FB7I6cDhvKKZSHuF2Pvxd5BDYFQNKgMPzlykn1yvDEimitX0i5lVPmno3idFAg7pmgR85WQDTRtGe5KRwlMpFxxMJkAL03IjDGuSp_iZ3aWUuZ4YzasPlsbVq
 Authorization: Basic Y2xpZW50OnNlY3JldA==
