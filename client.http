@@ -60,7 +60,7 @@ GET http://localhost:8090/.well-known/openid-configuration
 
 ###
 
-GET http://localhost:8090/oauth2/authorize?response_type=code&client_id=client&scope=openid&redirect_uri=http://localhost:8090/authorize
+GET http://localhost:8090/oauth2/authorize?response_type=code&client_id=client&scope=openid&redirect_uri=http://localhost:8090/authorize&code_challenge=lDYr1j82HekQDeT-q6J9lYe_CZoBC4LPhNnTGdrub40&code_challenge_method=S256
 
 # response_type=code – this request parameter specifies to the authorization server that
 # the client wants to use the authorization code grant type. Remember that a client might
@@ -84,7 +84,7 @@ GET http://localhost:8090/oauth2/authorize?response_type=code&client_id=client&s
 
 ###
 
-POST http://localhost:8090/oauth2/token?client_id=client&redirect_uri=http://localhost:8090/authorize&grant_type=authorization_code&code=sKYM2iVk34jBxXysfzaHRc1GIX1PkCWR59GXxqB03_hHQNNK-SAmyzaDODjKRs5Kc19jx_8Yoh0_UDvy2Rhjf7mZSDsO7_ov1zE3gsUv5KSYhqc67UCGDF_Kcy-JoSw2
+POST http://localhost:8090/oauth2/token?client_id=client&redirect_uri=http://localhost:8090/authorize&grant_type=authorization_code&code=nHlQGda2XqODlPJM-kyOYMoDL_FU7uMEVZMa3yVauRvuC2ZcvHzQYYAachNyWxghXWudlwJYxq403YSutlJFVHrStuPgDLffbIWtTpLvUil3Ev5mgAi2D3EN1Kx4cSZl&code_verifier=885aNTy9fYuTBEF5csGzpE9aVG8khvkrCX_1fx0ypeU
 Authorization: Basic Y2xpZW50OnNlY3JldA==
 
 # client_id=client – needed to identify the client

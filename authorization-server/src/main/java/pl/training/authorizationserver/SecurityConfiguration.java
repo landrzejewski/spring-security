@@ -10,13 +10,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
@@ -39,10 +38,13 @@ import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Duration;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.springframework.security.oauth2.core.AuthorizationGrantType.AUTHORIZATION_CODE;
 import static org.springframework.security.oauth2.core.ClientAuthenticationMethod.CLIENT_SECRET_BASIC;
+import static org.springframework.security.oauth2.core.oidc.OidcScopes.OPENID;
 
 @Configuration
 public class SecurityConfiguration {
@@ -71,7 +73,7 @@ public class SecurityConfiguration {
     public UserDetailsService userDetailsService() {
         UserDetails userDetails = User.withUsername("admin@training.pl")
                 .password("admin")
-                .roles("ROLE")
+                .roles("ADMIN")
                 .build();
         return new InMemoryUserDetailsManager(userDetails);
     }
@@ -91,13 +93,13 @@ public class SecurityConfiguration {
                 //.clientAuthenticationMethod(NONE)
                 .authorizationGrantType(AUTHORIZATION_CODE)
                 .redirectUri("http://localhost:8090/authorize")
-                .scope(OidcScopes.OPENID)
+                .scope(OPENID)
                 .tokenSettings(TokenSettings.builder()
                         .accessTokenTimeToLive(Duration.ofHours(1))
                         .build())
-                .clientSettings(ClientSettings.builder()
+                /*.clientSettings(ClientSettings.builder()
                         .requireProofKey(false)
-                        .build())
+                        .build())*/
                 .build();
 
         return new InMemoryRegisteredClientRepository(registeredClient);
@@ -129,6 +131,11 @@ public class SecurityConfiguration {
         return context -> {
             JwtClaimsSet.Builder claims = context.getClaims();
             claims.claim("zone", "secured");
+            var principal = context.getPrincipal();
+            Set<String> authorities = principal.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.toSet());
+            context.getClaims().claim("roles", authorities);
         };
     }
 
