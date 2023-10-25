@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,6 +30,8 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.firewall.HttpFirewall;
+import org.springframework.security.web.firewall.StrictHttpFirewall;
 
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -75,6 +78,7 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
+                .anonymous(AbstractHttpConfigurer::disable)
                 .formLogin(withDefaults())
                 .authorizeHttpRequests(config -> config
                         .anyRequest().permitAll()
@@ -86,11 +90,11 @@ public class SecurityConfiguration {
     public RegisteredClientRepository registeredClientRepository() {
         var shopClient = RegisteredClient
                 .withId(UUID.randomUUID().toString())
-                .clientId("shop-client")
+                .clientId("client")
                 .clientSecret("secret")
-                .clientAuthenticationMethod(NONE)
+                .clientAuthenticationMethod(CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AUTHORIZATION_CODE)
-                .redirectUri("http://localhost:8090/authorize")
+                .redirectUri("http://localhost:8080/authorize")
                 .scope(OPENID)
                 .clientSettings(ClientSettings.builder()
                         .requireProofKey(false)
@@ -128,6 +132,13 @@ public class SecurityConfiguration {
         return AuthorizationServerSettings.builder()
                 //.issuer("http://localhost:8090")
                 .build();
+    }
+
+    @Bean
+    public HttpFirewall httpFirewall() {
+        var firewall = new StrictHttpFirewall();
+        firewall.setAllowSemicolon(true);
+        return firewall;
     }
 
 }
