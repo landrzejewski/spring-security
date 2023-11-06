@@ -1,15 +1,25 @@
 package pl.training.shop.security;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 
 import javax.sql.DataSource;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.Map;
+
+import static org.springframework.security.core.context.SecurityContextHolder.MODE_INHERITABLETHREADLOCAL;
 
 @Configuration
 public class SecurityConfiguration {
@@ -38,8 +48,17 @@ public class SecurityConfiguration {
         AuthoritiesAuthorizationManager authoritiesAuthorizationManager; // Jedna z implementacji AuthorizationManager (role)*/
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
+    public PasswordEncoder passwordEncoder() throws NoSuchAlgorithmException {
+        var planText = NoOpPasswordEncoder.getInstance(); //deprecated
+        var bcrypt = new BCryptPasswordEncoder(10, SecureRandom.getInstanceStrong());
+        var scrypt = new SCryptPasswordEncoder(16384, 8, 1, 32, 64);
+
+        Map<String, PasswordEncoder> encoders = Map.of(
+                "noop", planText,
+                "bcrypt", bcrypt,
+                "scrypt", scrypt
+        );
+        return new DelegatingPasswordEncoder("bcrypt", encoders);
     }
 
     /*@Bean
@@ -61,5 +80,16 @@ public class SecurityConfiguration {
         return manager;
     }*/
 
+    @Bean
+    public InitializingBean initializingBean() {
+    /*
+        MODE_THREADLOCAL — Allows each thread to store its own details in the security context.
+        In a thread-per-request web application, this is a common approach as each request has an individual thread.
+        MODE_INHERITABLETHREADLOCAL — Similar to MODE_THREADLOCAL but also instructs Spring Security to copy the
+        security context to the next thread in case of an asynchronous/@Async method
+        MODE_GLOBAL — Makes all the threads of the application see the same security context instance
+     */
+        return () -> SecurityContextHolder.setStrategyName(MODE_INHERITABLETHREADLOCAL);
+    }
 
 }

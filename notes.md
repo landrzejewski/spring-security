@@ -10,9 +10,6 @@ openssl req -newkey rsa:2048 -x509 -keyout key.pem -out cert.pem -days 365
 openssl pkcs12 -export -in cert.pem -inkey key.pem -out certificate.p12 -name "certificate"
 
 ### Zadania
-- Zaimplementuj niestandardowy AuthorizationManager, tak aby było można autoryzować
-  dostęp do zasobów webowych na podstawie konfiguracji ładowanej z bazy (rola/url)
-
 - Dodaj filtr logujący informację zawarte w SecurityContext. W przypadku
 kiedy użytkownik nie jest zalogowany, filtr powinien o tym poinformować
 
@@ -22,6 +19,9 @@ Wykorzystaj poniższy algorytm do podpisania tokenu.
 ```
 public static final Algorithm ALGORITHM = Algorithm.HMAC256("secret");
 ```
+
+- Zaimplementuj niestandardowy AuthorizationManager, tak aby było można autoryzować
+  dostęp do zasobów webowych na podstawie konfiguracji ładowanej z bazy (rola/url)
 
 - Zaimplementuj usługę rest, zwracającą dane z zaszyfrowanych plików csv. Przed zwróceniem 
 dane powinny być przefiltrowane ze względu na treść oraz rolę użytkownika (JPA QL expressions, adnotacje).
