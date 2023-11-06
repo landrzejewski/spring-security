@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 
 import static pl.training.shop.security.extensions.jwt.JwtConfig.*;
 
-@Component
 public class JwtAuthenticationProvider implements AuthenticationProvider {
 
     private static final String ROLE_SEPARATOR = ",";

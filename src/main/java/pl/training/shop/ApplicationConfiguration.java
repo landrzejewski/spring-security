@@ -13,10 +13,10 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-       registry.addMapping("/api/**")
-               .allowedOrigins("http://localhost:4200")
-               .allowedHeaders("*")
-               .allowedMethods("*");
+        registry.addMapping("/api/**")
+                .allowedOrigins("http://localhost:4200")
+                .allowedHeaders("*")
+                .allowedMethods("*");
     }
 
     @Override

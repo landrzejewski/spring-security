@@ -12,7 +12,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-//@Component
 @RequiredArgsConstructor
 public class SecretAuthenticationProvider implements AuthenticationProvider {
 

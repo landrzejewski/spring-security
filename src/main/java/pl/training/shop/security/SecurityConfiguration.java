@@ -3,11 +3,8 @@ package pl.training.shop.security;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.encrypt.Encryptors;
@@ -17,14 +14,6 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.security.data.repository.query.SecurityEvaluationContextExtension;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.ExceptionTranslationFilter;
-import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import pl.training.shop.security.extensions.CustomEntryPoint;
-import pl.training.shop.security.extensions.SecurityLoggingFilter;
-import pl.training.shop.security.extensions.jwt.JwtAuthenticationFilter;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -37,7 +26,7 @@ import static org.springframework.security.core.context.SecurityContextHolder.MO
 @Configuration
 public class SecurityConfiguration {
 
-    /*AuthenticationManager authenticationManager; // Interfejs/kontrakt dla procesu uwierzytelnienia użytkownika
+  /*AuthenticationManager authenticationManager; // Interfejs/kontrakt dla procesu uwierzytelnienia użytkownika
         ProviderManager providerManager; // Podstawowa implementacja AuthenticationManager, deleguje proces uwierzytelnienia do jednego z obiektów AuthenticationProvider
             AuthenticationProvider authenticationProvider; // Interfejs/kontrakt dla obiektów realizujących uwierzytelnianie z wykorzystaniem konkretnego mechanizmu/implementacji
                 DaoAuthenticationProvider daoAuthenticationProvider; // Jedna z implementacji AuthenticationProvider, ładuje dane o użytkowniku wykorzystując UserDetailsService i porównuje je z tymi podanymi w czasie logowani
@@ -106,57 +95,6 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, SecurityLoggingFilter securityLoggingFilter,
-                                                   JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
-        return httpSecurity
-                //.addFilterBefore(secretAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(securityLoggingFilter, ExceptionTranslationFilter.class)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                //.anonymous(AbstractHttpConfigurer::disable)
-                .csrf(AbstractHttpConfigurer::disable)
-                //.userDetailsService(implementacja UserDetailsService)
-                //.httpBasic(withDefaults())
-                .httpBasic(config -> config
-                        .realmName("TRAINING")
-                        .authenticationEntryPoint(new CustomEntryPoint())
-                )
-                .formLogin(config -> config
-                        .loginPage("/login.html")
-                        .defaultSuccessUrl("/index.html")
-                        //.usernameParameter("username")
-                        //.passwordParameter("password")
-                        //.successHandler(implementacja AuthenticationSuccessHandler)
-                        //.failureHandler(implementacja CustomAuthenticationFailureHandler)
-                )
-                .logout(config -> config
-                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout.html"))
-                        .invalidateHttpSession(true)
-                        .logoutSuccessUrl("/login.html")
-                )
-                .authorizeHttpRequests(config -> config
-                        .requestMatchers("/api/tokens").permitAll()
-                        .requestMatchers("/login.html").permitAll()
-                        .requestMatchers("/favicon.ico").permitAll()
-                        .requestMatchers("/api/payments/{id:^\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}$}")
-                            //.hasAnyRole("ADMIN", "MANAGER")
-                            //.hasAuthority("read")
-                            .hasRole("ADMIN")
-                        .requestMatchers("/**").authenticated()
-
-                        //.anyRequest().access(new WebExpressionAuthorizationManager("hasAuthority('WRITE')"))
-                        //.requestMatchers("/**").access((authentication, object) -> new AuthorizationDecision(true))
-                        //.requestMatchers("/**").access(customAuthorizationManager)
-                        .anyRequest().authenticated()
-                )
-                /*.exceptionHandling(config -> config
-                        //.authenticationEntryPoint(implementacja AuthenticationEntryPoint)
-                        //.accessDeniedHandler(implementacja AccessDeniedHandler)
-                        //.accessDeniedPage("/access-denied.html")
-                )*/
-                .build();
-    }
-
-    @Bean
     public SecurityEvaluationContextExtension securityEvaluationContextExtension() {
         return new SecurityEvaluationContextExtension();
     }
@@ -167,8 +105,8 @@ public class SecurityConfiguration {
         String valueToEncrypt = "admin";
 
         var bytesEncryptor = Encryptors.standard(password, salt);
-        byte [] encryptedBytes = bytesEncryptor.encrypt(valueToEncrypt.getBytes());
-        byte [] decryptedBytes = bytesEncryptor.decrypt(encryptedBytes);
+        byte[] encryptedBytes = bytesEncryptor.encrypt(valueToEncrypt.getBytes());
+        byte[] decryptedBytes = bytesEncryptor.decrypt(encryptedBytes);
 
         var textEncryptor = Encryptors.text(password, salt);
         var encryptedText = textEncryptor.encrypt(valueToEncrypt);
