@@ -3,16 +3,23 @@ package pl.training.shop.security;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authorization.AuthorizationDecision;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.encrypt.Encryptors;
+import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
+import org.springframework.security.data.repository.query.SecurityEvaluationContextExtension;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import pl.training.shop.security.extensions.SecretAuthenticationFilter;
+import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import pl.training.shop.security.extensions.CustomEntryPoint;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -20,6 +27,7 @@ import java.util.Map;
 
 import static org.springframework.security.core.context.SecurityContextHolder.MODE_INHERITABLETHREADLOCAL;
 
+@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true/*, prePostEnabled = true*/)
 @Configuration
 public class SecurityConfiguration {
 
@@ -92,13 +100,67 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, SecretAuthenticationFilter secretAuthenticationFilter) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity/*, SecretAuthenticationFilter secretAuthenticationFilter*/) throws Exception {
         return httpSecurity
-                .addFilterBefore(secretAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                //.addFilterBefore(secretAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .csrf(AbstractHttpConfigurer::disable)
+                //.userDetailsService(implementacja UserDetailsService)
+                //.httpBasic(withDefaults())
+                .httpBasic(config -> config
+                        .realmName("TRAINING")
+                        .authenticationEntryPoint(new CustomEntryPoint())
+                )
+                .formLogin(config -> config
+                        .loginPage("/login.html")
+                        .defaultSuccessUrl("/index.html")
+                        //.usernameParameter("username")
+                        //.passwordParameter("password")
+                        //.successHandler(implementacja AuthenticationSuccessHandler)
+                        //.failureHandler(implementacja CustomAuthenticationFailureHandler)
+                )
+                .logout(config -> config
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout.html"))
+                        .invalidateHttpSession(true)
+                        .logoutSuccessUrl("/login.html")
+                )
                 .authorizeHttpRequests(config -> config
+                        .requestMatchers("/login.html").permitAll()
+                        .requestMatchers("/api/payments/{id:^\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}$}")
+                            //.hasAnyRole("ADMIN", "MANAGER")
+                            //.hasAuthority("read")
+                            .hasRole("ADMIN")
+                        .requestMatchers("/**").authenticated()
+
+                        //.anyRequest().access(new WebExpressionAuthorizationManager("hasAuthority('WRITE')"))
+                        //.requestMatchers("/**").access((authentication, object) -> new AuthorizationDecision(true))
+                        //.requestMatchers("/**").access(customAuthorizationManager)
                         .anyRequest().authenticated()
                 )
+                /*.exceptionHandling(config -> config
+                        //.authenticationEntryPoint(implementacja AuthenticationEntryPoint)
+                        //.accessDeniedHandler(implementacja AccessDeniedHandler)
+                        //.accessDeniedPage("/access-denied.html")
+                )*/
                 .build();
+    }
+
+    @Bean
+    public SecurityEvaluationContextExtension securityEvaluationContextExtension() {
+        return new SecurityEvaluationContextExtension();
+    }
+
+    public static void main(String args[]) {
+        String salt = KeyGenerators.string().generateKey();
+        String password = "secret";
+        String valueToEncrypt = "admin";
+
+        var bytesEncryptor = Encryptors.standard(password, salt);
+        byte [] encryptedBytes = bytesEncryptor.encrypt(valueToEncrypt.getBytes());
+        byte [] decryptedBytes = bytesEncryptor.decrypt(encryptedBytes);
+
+        var textEncryptor = Encryptors.text(password, salt);
+        var encryptedText = textEncryptor.encrypt(valueToEncrypt);
+        var decryptedText = textEncryptor.decrypt(encryptedText);
     }
 
 }
