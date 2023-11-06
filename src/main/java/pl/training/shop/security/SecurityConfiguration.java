@@ -6,7 +6,10 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
+
+import javax.sql.DataSource;
 
 @Configuration
 public class SecurityConfiguration {
@@ -39,7 +42,7 @@ public class SecurityConfiguration {
         return NoOpPasswordEncoder.getInstance();
     }
 
-    @Bean
+    /*@Bean
     public UserDetailsManager userDetailsManager() {
         var user = User
                 .withUsername("admin")
@@ -48,8 +51,15 @@ public class SecurityConfiguration {
                 .authorities("create", "read", "write")
                 .build();
         return new InMemoryUserDetailsManager(user);
-    }
+    }*/
 
+    /*@Bean
+    public UserDetailsManager userDetailsManager(DataSource dataSource) {
+        var manager = new JdbcUserDetailsManager(dataSource);
+        // manager.setUsersByUsernameQuery("select username, password, enabled from users where username = ?");
+        // manager.setAuthoritiesByUsernameQuery("select username, authority from authorities where username = ?");
+        return manager;
+    }*/
 
 
 }
