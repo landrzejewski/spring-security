@@ -33,6 +33,7 @@ public class SecurityInitializer implements ApplicationRunner {
             user.setActive(true);
             usersRepository.save(user);
         }
+        System.out.println(passwordEncoder.encode("admin"));
     }
 
 }

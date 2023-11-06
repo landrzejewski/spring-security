@@ -19,3 +19,9 @@ Authorization: Basic dXNlcjpkZjMxZjA5MC1hM2U2LTRlZWEtYTQ3NC04OGY3ODIzZTk1MGU=
 GET http://localhost:8080/api/payments/started?pageSize=10
 Accept: application/json
 Content-Type: application/json
+
+###
+GET http://localhost:8080/api/users/me
+Accept: application/json
+Content-Type: application/json
+Authorization: SECRET admin

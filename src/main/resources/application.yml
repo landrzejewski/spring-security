@@ -22,3 +22,4 @@ spring:
 logging:
   level:
     org.javamoney.moneta: OFF
+secret: "{bcrypt}$2a$10$NRcX5rLYupv3VWkP8ncZauxRbGCRXMesTgyY9CiUHFyePmyErS/cW"
