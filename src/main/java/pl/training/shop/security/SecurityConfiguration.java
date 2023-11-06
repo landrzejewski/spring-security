@@ -1,6 +1,12 @@
 package pl.training.shop.security;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.UserDetailsManager;
 
 @Configuration
 public class SecurityConfiguration {
@@ -27,5 +33,23 @@ public class SecurityConfiguration {
 
     AuthorizationManager authorizationManager; // Interfejs/kontrakt dla procesu autoryzacji
         AuthoritiesAuthorizationManager authoritiesAuthorizationManager; // Jedna z implementacji AuthorizationManager (role)*/
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return NoOpPasswordEncoder.getInstance();
+    }
+
+    @Bean
+    public UserDetailsManager userDetailsManager() {
+        var user = User
+                .withUsername("admin")
+                .password("123")
+                .roles("ADMIN")
+                .authorities("create", "read", "write")
+                .build();
+        return new InMemoryUserDetailsManager(user);
+    }
+
+
 
 }
