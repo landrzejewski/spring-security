@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,9 +18,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.security.data.repository.query.SecurityEvaluationContextExtension;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import pl.training.shop.security.extensions.CustomEntryPoint;
+import pl.training.shop.security.extensions.SecurityLoggingFilter;
+import pl.training.shop.security.extensions.jwt.JwtAuthenticationFilter;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -27,6 +32,7 @@ import java.util.Map;
 
 import static org.springframework.security.core.context.SecurityContextHolder.MODE_INHERITABLETHREADLOCAL;
 
+//@EnableWebSecurity(debug = true)
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true/*, prePostEnabled = true*/)
 @Configuration
 public class SecurityConfiguration {
@@ -100,9 +106,13 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity/*, SecretAuthenticationFilter secretAuthenticationFilter*/) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, SecurityLoggingFilter securityLoggingFilter,
+                                                   JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         return httpSecurity
                 //.addFilterBefore(secretAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(securityLoggingFilter, ExceptionTranslationFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                //.anonymous(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 //.userDetailsService(implementacja UserDetailsService)
                 //.httpBasic(withDefaults())
@@ -124,7 +134,9 @@ public class SecurityConfiguration {
                         .logoutSuccessUrl("/login.html")
                 )
                 .authorizeHttpRequests(config -> config
+                        .requestMatchers("/api/tokens").permitAll()
                         .requestMatchers("/login.html").permitAll()
+                        .requestMatchers("/favicon.ico").permitAll()
                         .requestMatchers("/api/payments/{id:^\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}$}")
                             //.hasAnyRole("ADMIN", "MANAGER")
                             //.hasAuthority("read")

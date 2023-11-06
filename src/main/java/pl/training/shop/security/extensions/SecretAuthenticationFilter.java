@@ -20,6 +20,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 public class SecretAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String SECRET_AUTHORIZATION_PREFIX = "SECRET ";
+    private static final String EMPTY = "";
 
     private final AuthenticationConfiguration authenticationConfiguration;
 
@@ -29,7 +30,7 @@ public class SecretAuthenticationFilter extends OncePerRequestFilter {
         if (authHeader == null || !authHeader.startsWith(SECRET_AUTHORIZATION_PREFIX)) {
             filterChain.doFilter(request, response);
         } else {
-            var secret = authHeader.replace(SECRET_AUTHORIZATION_PREFIX, "");
+            var secret = authHeader.replace(SECRET_AUTHORIZATION_PREFIX, EMPTY);
             var secretAuthentication =  new SecretAuthentication(secret.toCharArray());
             try {
                 var authenticationResult = authenticationConfiguration.getAuthenticationManager()
