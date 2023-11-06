@@ -34,8 +34,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
                 var authorities = Arrays.stream(roles.split(ROLE_SEPARATOR))
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toSet());
-                return UsernamePasswordAuthenticationToken
-                        .authenticated(user, token, authorities);
+                return UsernamePasswordAuthenticationToken.authenticated(user, token, authorities);
             } catch (JWTVerificationException jwtVerificationException) {
                 throw new BadCredentialsException("Invalid token");
             }
