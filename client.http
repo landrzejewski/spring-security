@@ -1,6 +1,7 @@
-POST http://localhost:8080/api/payments
+POST https://localhost/api/payments
 Accept: application/json
 Content-Type: application/json
+Authorization: bearer {{token}}
 
 {
   "id": 1,
@@ -9,7 +10,7 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:8080/api/payments/bc8730dd-1dd6-4d9d-9809-04e7f7629577
+GET https://localhost/api/payments/bc8730dd-1dd6-4d9d-9809-04e7f7629577
 Accept: application/json
 Content-Type: application/json
 Authorization: Basic dXNlcjpkZjMxZjA5MC1hM2U2LTRlZWEtYTQ3NC04OGY3ODIzZTk1MGU=

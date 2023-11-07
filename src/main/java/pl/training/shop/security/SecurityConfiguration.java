@@ -99,6 +99,7 @@ public class SecurityConfiguration {
         return new SecurityEvaluationContextExtension();
     }
 
+    // Spring Security Crypto module
     public static void main(String args[]) {
         String salt = KeyGenerators.string().generateKey();
         String password = "secret";

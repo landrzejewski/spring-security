@@ -13,6 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import pl.training.shop.security.extensions.CustomAuthorizationManager;
 import pl.training.shop.security.extensions.CustomEntryPoint;
 import pl.training.shop.security.extensions.SecretAuthenticationProvider;
 import pl.training.shop.security.extensions.SecurityLoggingFilter;
@@ -36,7 +37,8 @@ public class WebSecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, SecurityLoggingFilter securityLoggingFilter,
-                                                   JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
+                                                   JwtAuthenticationFilter jwtAuthenticationFilter,
+                                                   CustomAuthorizationManager customAuthorizationManager) throws Exception {
         return httpSecurity
                 //.addFilterBefore(secretAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(securityLoggingFilter, ExceptionTranslationFilter.class)
@@ -66,16 +68,16 @@ public class WebSecurityConfiguration {
                         .requestMatchers("/api/tokens").permitAll()
                         .requestMatchers("/login.html").permitAll()
                         .requestMatchers("/favicon.ico").permitAll()
-                        .requestMatchers("/api/payments/{id:^\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}$}")
+                        //.requestMatchers("/api/payments/{id:^\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}$}")
                             //.hasAnyRole("ADMIN", "MANAGER")
                             //.hasAuthority("read")
-                            .hasRole("ADMIN")
-                        .requestMatchers("/**").authenticated()
-
+                            //.hasRole("ADMIN")
+                        //.requestMatchers("/**").authenticated()
                         //.anyRequest().access(new WebExpressionAuthorizationManager("hasAuthority('WRITE')"))
-                        //.requestMatchers("/**").access((authentication, object) -> new AuthorizationDecision(true))
-                        //.requestMatchers("/**").access(customAuthorizationManager)
-                        .anyRequest().authenticated()
+                        //.anyRequest().access((authentication, object) -> new AuthorizationDecision(true))
+                        //.anyRequest().access(customAuthorizationManager)
+                        //.anyRequest().authenticated()
+                        .anyRequest().access(customAuthorizationManager)
                 )
                 /*.exceptionHandling(config -> config
                         //.authenticationEntryPoint(implementacja AuthenticationEntryPoint)
