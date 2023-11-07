@@ -52,7 +52,7 @@ Content-Type: application/json
 POST http://localhost:8100/realms/training/protocol/openid-connect/token
 Content-Type: application/x-www-form-urlencoded
 
-client_id=shop-client&grant_type=password&username=admin@training.pl&password=admin
+client_id=training-client&grant_type=password&username=admin@training.pl&password=admin
 
 > {%
     client.global.set('token', response.body.access_token);
@@ -66,7 +66,7 @@ client_id=shop-client&grant_type=password&username=admin@training.pl&password=ad
 POST http://localhost:8100/realms/training/protocol/openid-connect/token
 Content-Type: application/x-www-form-urlencoded
 
-client_id=shop-client&grant_type=refresh_token&refresh_token={{ refreshToken }}
+client_id=training-client&grant_type=refresh_token&refresh_token={{ refreshToken }}
 
 > {%
     client.global.set('token', response.body.access_token);
