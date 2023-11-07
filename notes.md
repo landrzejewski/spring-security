@@ -5,6 +5,10 @@ https://www.baeldung.com/apache-commons-csv
 https://cloudentity.com/developers/basics/oauth-extensions/authorization-code-with-pkce/
 https://stackoverflow.com/questions/60766213/whats-the-alternative-to-password-grant-now-that-it-is-deprecated-oauth-2-0
 
+### First login flow configuration
+Authentication -> Create flow (detect existing user flow, Basic flow) -> Add step (Detect existing broker user, Automatically set existing user)
+Identity providers -> github -> First login flow -> detect existing user flow
+
 ### Generowanie certyfikatu SSL
 openssl req -newkey rsa:2048 -x509 -keyout key.pem -out cert.pem -days 365
 openssl pkcs12 -export -in cert.pem -inkey key.pem -out certificate.p12 -name "certificate"
