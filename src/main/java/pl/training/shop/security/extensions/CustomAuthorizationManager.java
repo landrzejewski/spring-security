@@ -22,7 +22,8 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
 
     private final Map<String, Set<RequestMatcher>> mappings = Map.of(
             "ROLE_ADMIN", Set.of(
-                    new AntPathRequestMatcher("/api/users/**")
+                    new AntPathRequestMatcher("/api/users/**"),
+                    new AntPathRequestMatcher("/**")
             ),
             "ROLE_USER", Set.of(
                     new AntPathRequestMatcher("/api/payments/**")
