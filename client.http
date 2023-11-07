@@ -44,3 +44,31 @@ Content-Type: application/json
 > {%
     client.global.set('token', response.body.token);
 %}
+
+###
+
+//@no-redirect
+//@no-cookie-jar
+POST http://localhost:8100/realms/training/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id=shop-client&grant_type=password&username=admin@training.pl&password=admin
+
+> {%
+    client.global.set('token', response.body.access_token);
+    client.global.set('refreshToken', response.body.refresh_token);
+%}
+
+###
+
+//@no-redirect
+//@no-cookie-jar
+POST http://localhost:8100/realms/training/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id=shop-client&grant_type=refresh_token&refresh_token={{ refreshToken }}
+
+> {%
+    client.global.set('token', response.body.access_token);
+    client.global.set('refreshToken', response.body.refresh_token);
+%}
