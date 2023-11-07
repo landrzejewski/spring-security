@@ -54,11 +54,12 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.formLogin(Customizer.withDefaults());
-        http.authorizeHttpRequests(config -> config
-                .anyRequest().permitAll()
-        );
-        return http.build();
+        return http
+                .formLogin(Customizer.withDefaults())
+                .authorizeHttpRequests(config -> config
+                        .anyRequest().permitAll()
+                )
+                .build();
     }
 
     @Bean
