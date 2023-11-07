@@ -10,22 +10,8 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.oauth2ResourceServer(config -> config
-                        /*.jwt(jwtConfig -> jwtConfig
-                                .jwkSetUri("http://localhost:8090/oauth2/jwks")
-                                .jwtAuthenticationConverter(new CustomJwtAuthenticationConverter())
-                        )*/
-                        .opaqueToken(
-                                opaqueTokenConfig -> opaqueTokenConfig
-                                        .introspectionUri("http://localhost:8090/oauth2/introspect")
-                                        .introspectionClientCredentials("resource_server", "resource_server_secret")
-                        )
-                )
-                .authorizeHttpRequests(config -> config
-                        .anyRequest().hasRole("ADMIN")
-                )
+        return httpSecurity
                 .build();
     }
-
 
 }
