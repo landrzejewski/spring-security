@@ -27,7 +27,7 @@ public class SecurityConfiguration {
 
     private void jwtConfigurer(OAuth2ResourceServerConfigurer<HttpSecurity>.JwtConfigurer jwtConfigurer) {
         var jwtConverter = new JwtAuthenticationConverter();
-        jwtConverter.setJwtGrantedAuthoritiesConverter();
+        jwtConverter.setJwtGrantedAuthoritiesConverter(new KeycloakJwtGrantedAuthoritiesConverter());
         jwtConfigurer.jwtAuthenticationConverter(jwtConverter);
     }
 
