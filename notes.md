@@ -3,6 +3,7 @@ https://www.blitter.se/utils/basic-authentication-header-generator
 https://github.com/datablist/sample-csv-files
 https://cloudentity.com/developers/basics/oauth-extensions/authorization-code-with-pkce/
 https://stackoverflow.com/questions/60766213/whats-the-alternative-to-password-grant-now-that-it-is-deprecated-oauth-2-0
+https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid?hl=pl
 
 ### Generowanie certyfikatu SSL
 openssl req -newkey rsa:2048 -x509 -keyout key.pem -out cert.pem -days 365
