@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
@@ -20,6 +21,8 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
+import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
+import org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
@@ -37,9 +40,11 @@ import java.util.stream.Collectors;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.oauth2.core.AuthorizationGrantType.AUTHORIZATION_CODE;
+import static org.springframework.security.oauth2.core.AuthorizationGrantType.CLIENT_CREDENTIALS;
 import static org.springframework.security.oauth2.core.ClientAuthenticationMethod.CLIENT_SECRET_BASIC;
 import static org.springframework.security.oauth2.core.ClientAuthenticationMethod.NONE;
 import static org.springframework.security.oauth2.core.oidc.OidcScopes.OPENID;
+import static org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat.REFERENCE;
 
 @Configuration
 public class SecurityConfiguration {
@@ -70,7 +75,7 @@ public class SecurityConfiguration {
     public UserDetailsService userDetailsService() {
         var userDetails = User
                 .withUsername("admin@training.pl")
-                .password("admin")
+                .password(passwordEncoder().encode("admin"))
                 .roles("ADMIN")
                 .build();
         return new InMemoryUserDetailsManager(userDetails);
@@ -78,7 +83,7 @@ public class SecurityConfiguration {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
+        return new BCryptPasswordEncoder();
     }
 
     private String nextId() {
@@ -87,22 +92,23 @@ public class SecurityConfiguration {
 
     @Bean
     public RegisteredClientRepository registeredClientRepository() {
-        // Tokeny JWT
         var trainingClient = RegisteredClient
                 .withId(nextId())
                 .clientId("training-client")
-                .clientSecret("secret")
-                //.clientSecret("{noop}secret")
+                .clientSecret(passwordEncoder().encode("secret"))
                 .clientAuthenticationMethod(CLIENT_SECRET_BASIC)
+                //.clientAuthenticationMethod(NONE)
                 .authorizationGrantType(AUTHORIZATION_CODE)
+                .authorizationGrantType(CLIENT_CREDENTIALS)
                 .redirectUri("http://localhost:8090/authorize")
                 .scope(OPENID)
                 .tokenSettings(TokenSettings.builder()
+                        //.accessTokenFormat(REFERENCE) // opaque token
                         .accessTokenTimeToLive(Duration.ofHours(1))
                         .build())
-                /* .clientSettings(ClientSettings.builder()
-                         .requireProofKey(false)
-                         .build())*/
+                .clientSettings(ClientSettings.builder()
+                         .requireProofKey(true)
+                         .build())
                 .build();
         return new InMemoryRegisteredClientRepository(trainingClient);
     }

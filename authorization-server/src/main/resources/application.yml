@@ -3,4 +3,4 @@ server:
 logging:
   level:
     org.springframework.security: DEBUG
-    root: debug
+    #root: debug

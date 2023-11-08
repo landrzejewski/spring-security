@@ -33,7 +33,7 @@ GET http://localhost:8090/.well-known/openid-configuration
 
 ###
 
-GET http://localhost:8090/oauth2/authorize?response_type=code&client_id=training-client&scope=openid&redirect_uri=http://localhost:8090/authorize&code_challenge=UU0smq2X5pYSWoFSfVN_SeIySvow5QNDcn0rpxRAQKs&code_challenge_method=S256
+GET http://localhost:8090/oauth2/authorize?response_type=code&client_id=training-client&scope=openid&redirect_uri=http://localhost:8090/authorize&code_challenge=BvLDxPL54yB0LaXR_soFXznAPL8tIEkARyONlxzE2Y4&code_challenge_method=S256
 
 # response_type – this request parameter specifies to the authorization server that
 # the client wants to use the authorization code grant type. Remember that a client might
@@ -55,17 +55,14 @@ GET http://localhost:8090/oauth2/authorize?response_type=code&client_id=training
 
 ###
 
-POST http://localhost:8090/oauth2/token?client_id=training-client&redirect_uri=http://localhost:8090/authorize&grant_type=authorization_code&code=G-TjRjVCiLwJ24MGeRV2CdeGwgbrAR6eVUzjdmanjYJgvZBTJyL7J-VcmzLEmqsjmDIuohKVCy09h5v47Ga9iv4vLgC5buRPbgHTVhLvFRZ16s3GKen0oobK_8Et4SPr&code_verifier=mT-CWdklcpEjH-jiSF-Akvo2AwXpb-kNaJld-PWIDlw
+POST http://localhost:8090/oauth2/token?client_id=training-client&redirect_uri=http://localhost:8090/authorize&grant_type=authorization_code&code=nydQxIT6GakwqIEJs32xQ7CilKFImx_ufjJ_j1CXSXzdbl-uJyBlUsnYnkvrIeckkNShsso9Ehn7cj4GY3HWJ2tn1Tbi8azGl9xlY-xW9L8VjS9hv5-sqa37ODtq6TzD&code_verifier=xBqCt3KRCLTcN12pldVWdNBzRsaUlzR1-tKgCvkKi7E
 Authorization: Basic dHJhaW5pbmctY2xpZW50OnNlY3JldA==
 
 > {%
     client.global.set('token', response.body.access_token);
-    client.global.set('refreshToken', response.body.refresh_token);
 %}
 
 ###
-
-
 
 # client_id – needed to identify the client
 # redirect_uri – the redirect URI through which the authorization server provided the authorization code after the successful user authentication.
@@ -75,14 +72,14 @@ Authorization: Basic dHJhaW5pbmctY2xpZW50OnNlY3JldA==
 
 ### client credentials
 
-POST http://localhost:8090/oauth2/token?grant_type=client_credentials&scope=CUSTOM
-Authorization: Basic Y2xpZW50OnNlY3JldA==
+POST http://localhost:8090/oauth2/token?grant_type=client_credentials&scope=openid
+Authorization: Basic dHJhaW5pbmctY2xpZW50OnNlY3JldA==
 
 ### opaue token validation
-POST http://localhost:8090/oauth2/introspect?token=B9GUZc4FB7I6cDhvKKZSHuF2Pvxd5BDYFQNKgMPzlykn1yvDEimitX0i5lVPmno3idFAg7pmgR85WQDTRtGe5KRwlMpFxxMJkAL03IjDGuSp_iZ3aWUuZ4YzasPlsbVq
-Authorization: Basic Y2xpZW50OnNlY3JldA==
+POST http://localhost:8090/oauth2/introspect?token=ti6isRBrvvB3sWWHwRmgQm4NTt-wghCGMU4Z_WHNDZ45ABP27xFscuXmFcKcQtduffYTjVHJ9qzsMSpRgmbpDyzkkBXQz2daLejDJczTMwKrYE2bAc8mChbBpjdLoqrp
+Authorization: Basic dHJhaW5pbmctY2xpZW50OnNlY3JldA==
 
 ### token revoke
 
-POST http://localhost:8090/oauth2/revoke?token=B9GUZc4FB7I6cDhvKKZSHuF2Pvxd5BDYFQNKgMPzlykn1yvDEimitX0i5lVPmno3idFAg7pmgR85WQDTRtGe5KRwlMpFxxMJkAL03IjDGuSp_iZ3aWUuZ4YzasPlsbVq
-Authorization: Basic Y2xpZW50OnNlY3JldA==
+POST http://localhost:8090/oauth2/revoke?token=ti6isRBrvvB3sWWHwRmgQm4NTt-wghCGMU4Z_WHNDZ45ABP27xFscuXmFcKcQtduffYTjVHJ9qzsMSpRgmbpDyzkkBXQz2daLejDJczTMwKrYE2bAc8mChbBpjdLoqrp
+Authorization: Basic dHJhaW5pbmctY2xpZW50OnNlY3JldA==
