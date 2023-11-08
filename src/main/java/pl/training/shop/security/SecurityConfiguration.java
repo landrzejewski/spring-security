@@ -47,7 +47,7 @@ public class SecurityConfiguration {
     }
 
     private void oauth2LoginConfig(OAuth2LoginConfigurer.UserInfoEndpointConfig config) {
-        config.userAuthoritiesMapper(new GitHubGrantedAuthoritiesMapper());
+        config.userAuthoritiesMapper(new SpringGrantedAuthoritiesMapper());
     }
 
 }
