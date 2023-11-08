@@ -28,17 +28,22 @@ spring:
     oauth2:
       client:
         registration:
-          spring:
-            client-id: training-client
-            authorization-grant-type: authorization_code
-            client-secret: secret
-            client-authentication-method: client_secret_basic
-            redirect-uri: "http://127.0.0.1:8080/login/oauth2/code/{registrationId}" #http://localhost:8080/login/oauth2/code/spring
-            scope:
-              - openid
-        provider:
-          spring:
-            issuer-uri: http://localhost:8090
+          github:
+            client-id: e167b884504a0e42bc3b
+            client-secret: dc1c8fde82c85e0ea79b2892ea99501522c3861b
+#      client:
+#        registration:
+#          spring:
+#            client-id: training-client
+#            authorization-grant-type: authorization_code
+#            client-secret: secret
+#            client-authentication-method: client_secret_basic
+#            redirect-uri: "http://127.0.0.1:8080/login/oauth2/code/{registrationId}" #http://localhost:8080/login/oauth2/code/spring
+#            scope:
+#              - openid
+#        provider:
+#          spring:
+#            issuer-uri: http://localhost:8090
 logging:
   level:
     org.javamoney.moneta: OFF

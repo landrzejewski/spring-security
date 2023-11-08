@@ -34,7 +34,7 @@ public class SecurityConfiguration {
                 )
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(config -> config
-                        .anyRequest().hasRole("ADMIN")
+                        .anyRequest().authenticated()
                 )
                 .build();
     }
@@ -47,7 +47,7 @@ public class SecurityConfiguration {
     }
 
     private void oauth2LoginConfig(OAuth2LoginConfigurer.UserInfoEndpointConfig config) {
-        config.userAuthoritiesMapper(new SpringGrantedAuthoritiesMapper());
+        config.userAuthoritiesMapper(new GitHubGrantedAuthoritiesMapper());
     }
 
 }
