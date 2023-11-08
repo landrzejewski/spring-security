@@ -7,7 +7,7 @@ import java.util.Base64;
 public class GenerateChallenge {
 
     public static void main(String[] args) {
-        String verifier = "A-9NJaJ2t18dQ8WAV6Hu3e3sd9rDk7icGEnATsIsLKM";
+        String verifier = "mT-CWdklcpEjH-jiSF-Akvo2AwXpb-kNaJld-PWIDlw";
         System.out.println(generateChallenge(verifier));
     }
 

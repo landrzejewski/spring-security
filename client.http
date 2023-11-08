@@ -1,7 +1,7 @@
 POST https://localhost:8443/api/payments
 Accept: application/json
 Content-Type: application/json
-Authorization: bearer eyJraWQiOiI4MjE0MDcxMC1mZjI5LTQ3NGEtYTZmMS00NzBmMjMxZDdmMzkiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJhZG1pbkB0cmFpbmluZy5wbCIsImF1ZCI6ImNsaWVudCIsIm5iZiI6MTY5ODIyOTIyNywiem9uZSI6InNlY3VyZWQiLCJzY29wZSI6WyJvcGVuaWQiXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDkwIiwiZXhwIjoxNjk4MjMyODI3LCJpYXQiOjE2OTgyMjkyMjcsImF1dGhvcml0aWVzIjpbIlJPTEVfQURNSU4iXX0.Ex8OA7icxmtZZ5uGS3ByZEMkAo__VrYi8XySZum8xKUZ6NXMSQUjWnJexuAdrcJeOc-PkUYSlAsGnSNV-uR_kb2yTGsyy4_DcF1hcIHLsNRM_vbDsbyVKirIeNBcJe3Oo9Cc3F-7YJ8PHmrl_3NSe9Y3sAuwiMkIjZRM8ug2zllhIzEsOy9dY00JJg1yXivrPBFFuJ1HQHJ24xK0cwZVivkD10tG5zfQvaWX34Y9_zWn02pujhdhuUeB2aFAxw1oRt2Y9wpoFYpcQDCl4Tuh0rwOnMG8H3iAsvv2xaKykRgS-l2q5i7Gtx8dS4m1RGylDFQ0vEsldW3KB5esMbcu6g
+Authorization: Basic {{token}}
 
 {
   "id": 1,
@@ -13,62 +13,65 @@ Authorization: bearer eyJraWQiOiI4MjE0MDcxMC1mZjI5LTQ3NGEtYTZmMS00NzBmMjMxZDdmMz
 GET https://localhost:8443/api/payments/bc8730dd-1dd6-4d9d-9809-04e7f7629577
 Accept: application/json
 Content-Type: application/json
-Authorization: bearer eyJraWQiOiI4MjE0MDcxMC1mZjI5LTQ3NGEtYTZmMS00NzBmMjMxZDdmMzkiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJhZG1pbkB0cmFpbmluZy5wbCIsImF1ZCI6ImNsaWVudCIsIm5iZiI6MTY5ODIyOTIyNywiem9uZSI6InNlY3VyZWQiLCJzY29wZSI6WyJvcGVuaWQiXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDkwIiwiZXhwIjoxNjk4MjMyODI3LCJpYXQiOjE2OTgyMjkyMjcsImF1dGhvcml0aWVzIjpbIlJPTEVfQURNSU4iXX0.Ex8OA7icxmtZZ5uGS3ByZEMkAo__VrYi8XySZum8xKUZ6NXMSQUjWnJexuAdrcJeOc-PkUYSlAsGnSNV-uR_kb2yTGsyy4_DcF1hcIHLsNRM_vbDsbyVKirIeNBcJe3Oo9Cc3F-7YJ8PHmrl_3NSe9Y3sAuwiMkIjZRM8ug2zllhIzEsOy9dY00JJg1yXivrPBFFuJ1HQHJ24xK0cwZVivkD10tG5zfQvaWX34Y9_zWn02pujhdhuUeB2aFAxw1oRt2Y9wpoFYpcQDCl4Tuh0rwOnMG8H3iAsvv2xaKykRgS-l2q5i7Gtx8dS4m1RGylDFQ0vEsldW3KB5esMbcu6g
+Authorization: Basic {{token}}
 
 ###
 
 GET https://localhost:8443/api/payments/started?pageSize=10
 Accept: application/json
 Content-Type: application/json
-Authorization: Basic YWRtaW5AdHJhaW5pbmcucGw6YWRtaW4=
+Authorization: Basic {{token}}
 
 ###
 
 GET http://localhost:8090/.well-known/openid-configuration
 
-# authorization_endpoint The authorization endpoint to which a client will redirect the user to authenticate.
-# token_endpoint The token endpoint the client will call to request an access token.
-# jwks_uri  The key set endpoint a resource server will call to get the public keys it can use to validate tokens.
-# introspection_endpoint The introspection endpoint a resource server can call to validate opaque tokens.
+# authorization_endpoint - The authorization endpoint to which a client will redirect the user to authenticate.
+# token_endpoint - The token endpoint the client will call to request an access token.
+# jwks_uri - The key set endpoint a resource server will call to get the public keys it can use to validate tokens.
+# introspection_endpoint - The introspection endpoint a resource server can call to validate opaque tokens.
 
 ###
 
-GET http://localhost:8090/oauth2/authorize?response_type=code&client_id=client&scope=openid&redirect_uri=http://localhost:8090/authorize&code_challenge=4UfE_box-Orkvlf71Cmu9nwY4wkP0GiTN_hj0MnL69I&code_challenge_method=S256
+GET http://localhost:8090/oauth2/authorize?response_type=code&client_id=training-client&scope=openid&redirect_uri=http://localhost:8090/authorize&code_challenge=UU0smq2X5pYSWoFSfVN_SeIySvow5QNDcn0rpxRAQKs&code_challenge_method=S256
 
-# response_type=code – this request parameter specifies to the authorization server that
+# response_type – this request parameter specifies to the authorization server that
 # the client wants to use the authorization code grant type. Remember that a client might
 # have configured multiple grant types. It needs to tell the authorization server which
 # grant type it wants to use.
-# client_id=client – the client identifier is like the “username” for the user. It uniquily
+# client_id – the client identifier is like the “username” for the user. It uniquily
 # identifies the client in the system.
-# scope=openid – Specifies which scope the client wants to be granted with this
-# authentication attempt.
-# redirect_uri – Specifies the URI to which the
-# authorization server will redirect after a successful authentication. This URI must be
+# scope – Specifies which scope the client wants to be granted with this authentication attempt.
+# redirect_uri – Specifies the URI to which the authorization server will redirect after a successful authentication. This URI must be
 # one of those previously configured for the current client.
-# code_challenge=QYPAZ5NU8yvtlQ… - If using the authorization code enhanced with
+# code_challenge= - If using the authorization code enhanced with
 # PKCE (discussed in chapter 13), you must provide the code challenge with the
 # authorization request. When requesting the token, the client must send the verifier pair
 # to prove they are the same application that initially sent this request. The PKCE flow is
 # enabled by default.
-# code_challenge_method=S256 – This request parameter specifies which is the hashing
+# code_challenge_method – This request parameter specifies which is the hashing
 # method that has been used to create the challenge from the verifier. In this case, S256
 # means SHA-256 was used as a hash function.
 
 ###
 
-POST http://localhost:8090/oauth2/token?client_id=client&redirect_uri=http://localhost:8090/authorize&grant_type=authorization_code&code=b2wmNeaqf-9Fpjyl_4i-ro6SKiF7zRG72vQNzpCTfau5djYtPYF0Mw18kZGGgaAIE5vKNKjojv17BEhXHzuUoJG0wzg7NisCsT9L7Gy8LOUcSKvcOQbQ4S5If-VFLTaD&code_verifier=A-9NJaJ2t18dQ8WAV6Hu3e3sd9rDk7icGEnATsIsLKM
-Authorization: Basic Y2xpZW50OnNlY3JldA==
+POST http://localhost:8090/oauth2/token?client_id=training-client&redirect_uri=http://localhost:8090/authorize&grant_type=authorization_code&code=G-TjRjVCiLwJ24MGeRV2CdeGwgbrAR6eVUzjdmanjYJgvZBTJyL7J-VcmzLEmqsjmDIuohKVCy09h5v47Ga9iv4vLgC5buRPbgHTVhLvFRZ16s3GKen0oobK_8Et4SPr&code_verifier=mT-CWdklcpEjH-jiSF-Akvo2AwXpb-kNaJld-PWIDlw
+Authorization: Basic dHJhaW5pbmctY2xpZW50OnNlY3JldA==
 
-# client_id=client – needed to identify the client
-# redirect_uri= – the redirect URI through which
-# the authorization server provided the authorization code after the successful user
-# authentication.
-# grant_type=authorization_code – which flow the client uses to request the access token
-# code=ao2oz47zdM0D5…– the value of the authorization code the authorization server
-# provided to the client
-# code_verifier=qPsH306-ZDD… – the verifier based on which the challenge that the client
-# sent at authorization was created.
+> {%
+    client.global.set('token', response.body.access_token);
+    client.global.set('refreshToken', response.body.refresh_token);
+%}
+
+###
+
+
+
+# client_id – needed to identify the client
+# redirect_uri – the redirect URI through which the authorization server provided the authorization code after the successful user authentication.
+# grant_type – which flow the client uses to request the access token
+# code – the value of the authorization code the authorization server provided to the client
+# code_verifier – the verifier based on which the challenge that the client sent at authorization was created.
 
 ### client credentials
 

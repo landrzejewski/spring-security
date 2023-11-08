@@ -8,54 +8,58 @@ import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
-import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
-import org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
-import org.springframework.security.web.firewall.HttpFirewall;
-import org.springframework.security.web.firewall.StrictHttpFirewall;
 
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Duration;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.oauth2.core.AuthorizationGrantType.AUTHORIZATION_CODE;
-import static org.springframework.security.oauth2.core.AuthorizationGrantType.CLIENT_CREDENTIALS;
 import static org.springframework.security.oauth2.core.ClientAuthenticationMethod.CLIENT_SECRET_BASIC;
+import static org.springframework.security.oauth2.core.ClientAuthenticationMethod.NONE;
 import static org.springframework.security.oauth2.core.oidc.OidcScopes.OPENID;
-import static org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat.REFERENCE;
 
 @Configuration
 public class SecurityConfiguration {
 
     @Bean
+    @Order(1)
+    public SecurityFilterChain asFilterChain(HttpSecurity http) throws Exception {
+        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
+        http.getConfigurer(OAuth2AuthorizationServerConfigurer.class).oidc(withDefaults());
+        http.exceptionHandling(config -> config
+                .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
+        );
+        return http.build();
+    }
+
+    @Bean
+    @Order(2)
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .formLogin(Customizer.withDefaults())
+                .formLogin(withDefaults())
                 .authorizeHttpRequests(config -> config
                         .anyRequest().permitAll()
                 )
@@ -64,7 +68,8 @@ public class SecurityConfiguration {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        UserDetails userDetails = User.withUsername("admin@training.pl")
+        var userDetails = User
+                .withUsername("admin@training.pl")
                 .password("admin")
                 .roles("ADMIN")
                 .build();
@@ -76,12 +81,37 @@ public class SecurityConfiguration {
         return NoOpPasswordEncoder.getInstance();
     }
 
+    private String nextId() {
+        return UUID.randomUUID().toString();
+    }
+
+    @Bean
+    public RegisteredClientRepository registeredClientRepository() {
+        // Tokeny JWT
+        var trainingClient = RegisteredClient
+                .withId(nextId())
+                .clientId("training-client")
+                .clientSecret("secret")
+                //.clientSecret("{noop}secret")
+                .clientAuthenticationMethod(CLIENT_SECRET_BASIC)
+                .authorizationGrantType(AUTHORIZATION_CODE)
+                .redirectUri("http://localhost:8090/authorize")
+                .scope(OPENID)
+                .tokenSettings(TokenSettings.builder()
+                        .accessTokenTimeToLive(Duration.ofHours(1))
+                        .build())
+                /* .clientSettings(ClientSettings.builder()
+                         .requireProofKey(false)
+                         .build())*/
+                .build();
+        return new InMemoryRegisteredClientRepository(trainingClient);
+    }
+
     @Bean
     public JWKSource<SecurityContext> jwkSource() throws NoSuchAlgorithmException {
         var keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         keyPairGenerator.initialize(2048);
         var keyPair = keyPairGenerator.generateKeyPair();
-
         var publicKey = (RSAPublicKey) keyPair.getPublic();
         var privateKey = (RSAPrivateKey) keyPair.getPrivate();
         var rsaKey = new RSAKey.Builder(publicKey)
@@ -90,6 +120,27 @@ public class SecurityConfiguration {
                 .build();
         var jwkSet = new JWKSet(rsaKey);
         return new ImmutableJWKSet<>(jwkSet);
+    }
+
+    @Bean
+    public AuthorizationServerSettings authorizationServerSettings() {
+        return AuthorizationServerSettings.builder()
+                //.issuer("http://localhost:8090")
+                .build();
+    }
+
+    @Bean
+    public OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer() {
+        return context -> {
+            var claims = context.getClaims();
+            claims.claim("zone", "secured");
+            var authorities = context.getPrincipal()
+                    .getAuthorities()
+                    .stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.toSet());
+            claims.claim("authorities", authorities);
+        };
     }
 
 }
