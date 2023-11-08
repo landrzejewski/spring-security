@@ -13,7 +13,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
@@ -22,7 +21,6 @@ import org.springframework.security.oauth2.server.authorization.config.annotatio
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
-import org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
@@ -35,6 +33,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Duration;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -42,7 +41,6 @@ import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.oauth2.core.AuthorizationGrantType.AUTHORIZATION_CODE;
 import static org.springframework.security.oauth2.core.AuthorizationGrantType.CLIENT_CREDENTIALS;
 import static org.springframework.security.oauth2.core.ClientAuthenticationMethod.CLIENT_SECRET_BASIC;
-import static org.springframework.security.oauth2.core.ClientAuthenticationMethod.NONE;
 import static org.springframework.security.oauth2.core.oidc.OidcScopes.OPENID;
 import static org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat.REFERENCE;
 
@@ -68,6 +66,11 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(config -> config
                         .anyRequest().permitAll()
                 )
+                .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> {
+                    httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint((request, response, authException) -> {
+                        System.out.println(authException);
+                    });
+                })
                 .build();
     }
 
@@ -100,17 +103,25 @@ public class SecurityConfiguration {
                 //.clientAuthenticationMethod(NONE)
                 .authorizationGrantType(AUTHORIZATION_CODE)
                 .authorizationGrantType(CLIENT_CREDENTIALS)
-                .redirectUri("http://localhost:8090/authorize")
+                .redirectUri("https://localhost")
                 .scope(OPENID)
                 .tokenSettings(TokenSettings.builder()
                         //.accessTokenFormat(REFERENCE) // opaque token
                         .accessTokenTimeToLive(Duration.ofHours(1))
                         .build())
                 .clientSettings(ClientSettings.builder()
-                         .requireProofKey(true)
-                         .build())
+                        .requireProofKey(false)
+                        .build())
                 .build();
-        return new InMemoryRegisteredClientRepository(trainingClient);
+
+        // verification and revoking
+        var paymentsResourceServerClient = RegisteredClient.withId(UUID.randomUUID().toString())
+                .clientId("payments_resource_server")
+                .clientSecret(passwordEncoder().encode("secret"))
+                .clientAuthenticationMethod(CLIENT_SECRET_BASIC)
+                .authorizationGrantType(CLIENT_CREDENTIALS)
+                .build();
+        return new InMemoryRegisteredClientRepository(trainingClient, paymentsResourceServerClient);
     }
 
     @Bean
@@ -140,12 +151,16 @@ public class SecurityConfiguration {
         return context -> {
             var claims = context.getClaims();
             claims.claim("zone", "secured");
-            var authorities = context.getPrincipal()
-                    .getAuthorities()
-                    .stream()
-                    .map(GrantedAuthority::getAuthority)
-                    .collect(Collectors.toSet());
-            claims.claim("authorities", authorities);
+            if (context.getAuthorizationGrantType().equals(CLIENT_CREDENTIALS)) {
+                claims.claim("authorities", Set.of("ROLE_ADMIN"));
+            } else {
+                var authorities = context.getPrincipal()
+                        .getAuthorities()
+                        .stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.toSet());
+                claims.claim("authorities", authorities);
+            }
         };
     }
 

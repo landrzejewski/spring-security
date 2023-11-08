@@ -1,7 +1,7 @@
-POST https://localhost:8443/api/payments
+POST https://localhost/api/payments
 Accept: application/json
 Content-Type: application/json
-Authorization: Basic {{token}}
+Authorization: bearer {{token}}
 
 {
   "id": 1,
@@ -10,17 +10,17 @@ Authorization: Basic {{token}}
 
 ###
 
-GET https://localhost:8443/api/payments/bc8730dd-1dd6-4d9d-9809-04e7f7629577
+GET https://localhost/api/payments/bc8730dd-1dd6-4d9d-9809-04e7f7629577
 Accept: application/json
 Content-Type: application/json
-Authorization: Basic {{token}}
+Authorization: bearer {{token}}
 
 ###
 
-GET https://localhost:8443/api/payments/started?pageSize=10
+GET https://localhost/api/payments/started?pageSize=10
 Accept: application/json
 Content-Type: application/json
-Authorization: Basic {{token}}
+Authorization: bearer {{token}}
 
 ###
 
@@ -74,6 +74,10 @@ Authorization: Basic dHJhaW5pbmctY2xpZW50OnNlY3JldA==
 
 POST http://localhost:8090/oauth2/token?grant_type=client_credentials&scope=openid
 Authorization: Basic dHJhaW5pbmctY2xpZW50OnNlY3JldA==
+
+> {%
+    client.global.set('token', response.body.access_token);
+%}
 
 ### opaue token validation
 POST http://localhost:8090/oauth2/introspect?token=ti6isRBrvvB3sWWHwRmgQm4NTt-wghCGMU4Z_WHNDZ45ABP27xFscuXmFcKcQtduffYTjVHJ9qzsMSpRgmbpDyzkkBXQz2daLejDJczTMwKrYE2bAc8mChbBpjdLoqrp

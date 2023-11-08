@@ -8,7 +8,7 @@ server:
     key-store-password: password
     key-store: classpath:certificate.p12
     key-store-type: PKCS12
-  port: 8443
+  port: 443
 spring:
   datasource:
     username: admin
@@ -24,6 +24,19 @@ spring:
     open-in-view: false
   messages:
     basename: exceptions,text
+  security:
+    oauth2:
+      client:
+        registration:
+          spring:
+            client-id: training-client
+            client-secret: secret
+            authorization-grant-type: authorization_code
+            scope:
+              - openid
+        provider:
+          spring:
+            issuer-uri: http://localhost:8090
 logging:
   level:
     org.javamoney.moneta: OFF
