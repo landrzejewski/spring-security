@@ -11,8 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
-import static org.springframework.security.config.http.SessionCreationPolicy.ALWAYS;
-
 @Configuration
 public class SecurityConfiguration {
 

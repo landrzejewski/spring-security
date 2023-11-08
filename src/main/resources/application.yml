@@ -33,7 +33,7 @@ spring:
             authorization-grant-type: authorization_code
             client-secret: secret
             client-authentication-method: client_secret_basic
-            redirect-uri: "http://hcf:8080/login/oauth2/code/{registrationId}" #http://localhost:8080/login/oauth2/code/spring
+            redirect-uri: "http://127.0.0.1:8080/login/oauth2/code/{registrationId}" #http://localhost:8080/login/oauth2/code/spring
             scope:
               - openid
         provider:

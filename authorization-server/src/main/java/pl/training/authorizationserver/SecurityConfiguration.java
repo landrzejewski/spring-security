@@ -97,12 +97,12 @@ public class SecurityConfiguration {
                 .clientAuthenticationMethod(CLIENT_SECRET_BASIC)
                 //.clientAuthenticationMethod(NONE)
                 .authorizationGrantType(AUTHORIZATION_CODE)
-                //.authorizationGrantType(CLIENT_CREDENTIALS)
-                .redirectUri("http://hcf:8080/login/oauth2/code/spring")
+                .authorizationGrantType(CLIENT_CREDENTIALS)
+                .redirectUri("http://127.0.0.1:8080/login/oauth2/code/spring") // 127.0.0.1 wymagane kiedy auth server i client są na tym samym hoście
                 .scope(OPENID)
                 .tokenSettings(TokenSettings.builder()
                         //.accessTokenFormat(REFERENCE) // opaque token
-                        .accessTokenTimeToLive(Duration.ofHours(1))
+                        .accessTokenTimeToLive(Duration.ofMinutes(1))
                         .build())
                 .clientSettings(ClientSettings.builder()
                         .requireProofKey(false)

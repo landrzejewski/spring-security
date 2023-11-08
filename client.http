@@ -1,4 +1,4 @@
-POST https://localhost/api/payments
+POST http://localhost:8080/api/payments
 Accept: application/json
 Content-Type: application/json
 Authorization: bearer {{token}}
