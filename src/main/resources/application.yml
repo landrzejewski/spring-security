@@ -1,0 +1,43 @@
+server:
+  servlet:
+    session:
+      timeout: 3600s
+      cookie:
+        max-age: 3600s
+  ssl:
+    key-store-password: password
+    key-store: classpath:certificate.p12
+    key-store-type: PKCS12
+  port: 443
+spring:
+  datasource:
+    username: admin
+    password: admin admin
+    url: jdbc:h2:file:./data/h2-db.db;CIPHER=AES;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    hikari:
+      maximum-pool-size: 5
+  jpa:
+    generate-ddl: true
+#    hibernate:
+#      ddl-auto: create-drop
+    open-in-view: false
+  messages:
+    basename: exceptions,text
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8100/realms/training
+      client:
+        registration:
+          keycloak:
+            client-id: training-client
+            scope:
+              - openid
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8100/realms/training
+logging:
+  level:
+    org.javamoney.moneta: OFF
