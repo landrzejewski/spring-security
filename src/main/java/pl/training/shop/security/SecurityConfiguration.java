@@ -3,12 +3,15 @@ package pl.training.shop.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.oauth2.client.OAuth2LoginConfigurer;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
+
+import static org.springframework.security.config.http.SessionCreationPolicy.ALWAYS;
 
 @Configuration
 public class SecurityConfiguration {
@@ -31,6 +34,7 @@ public class SecurityConfiguration {
                 .oauth2Login(config ->
                         config.userInfoEndpoint(this::oauth2LoginConfig)
                 )
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(config -> config
                         .anyRequest().hasRole("ADMIN")
                 )
@@ -45,7 +49,7 @@ public class SecurityConfiguration {
     }
 
     private void oauth2LoginConfig(OAuth2LoginConfigurer.UserInfoEndpointConfig config) {
-      //  config.userAuthoritiesMapper(authorities -> new OAuth2GrantedAuthoritiesMapper().map(authorities));
+        config.userAuthoritiesMapper(authorities -> );
     }
 
 }

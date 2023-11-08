@@ -33,7 +33,7 @@ GET http://localhost:8090/.well-known/openid-configuration
 
 ###
 
-GET http://localhost:8090/oauth2/authorize?response_type=code&client_id=training-client&scope=openid&redirect_uri=http://localhost:8090/authorize&code_challenge=BvLDxPL54yB0LaXR_soFXznAPL8tIEkARyONlxzE2Y4&code_challenge_method=S256
+GET http://localhost:8090/oauth2/authorize?response_type=code&client_id=training-client&scope=openid&redirect_uri=http://localhost:8080/oauth2/authorization/spring&code_challenge=BvLDxPL54yB0LaXR_soFXznAPL8tIEkARyONlxzE2Y4&code_challenge_method=S256
 
 # response_type – this request parameter specifies to the authorization server that
 # the client wants to use the authorization code grant type. Remember that a client might
@@ -55,7 +55,7 @@ GET http://localhost:8090/oauth2/authorize?response_type=code&client_id=training
 
 ###
 
-POST http://localhost:8090/oauth2/token?client_id=training-client&redirect_uri=http://localhost:8090/authorize&grant_type=authorization_code&code=nydQxIT6GakwqIEJs32xQ7CilKFImx_ufjJ_j1CXSXzdbl-uJyBlUsnYnkvrIeckkNShsso9Ehn7cj4GY3HWJ2tn1Tbi8azGl9xlY-xW9L8VjS9hv5-sqa37ODtq6TzD&code_verifier=xBqCt3KRCLTcN12pldVWdNBzRsaUlzR1-tKgCvkKi7E
+POST http://localhost:8090/oauth2/token?client_id=training-client&redirect_uri=http://localhost:8080/oauth2/authorization/spring&grant_type=authorization_code&code=8DQjj0q7DOM-Zevtd0NSiLTdHW0JJuViRsuFabt2fMCcQ-pkGV8Oa6qeARk_hQf8Yf7WtUGg4S1NS3WKC9IXQkVu1bHBHIR3dji8b03SegwLVeFK15pIQ4UxjxuM4pvy&code_verifier=xBqCt3KRCLTcN12pldVWdNBzRsaUlzR1-tKgCvkKi7E
 Authorization: Basic dHJhaW5pbmctY2xpZW50OnNlY3JldA==
 
 > {%

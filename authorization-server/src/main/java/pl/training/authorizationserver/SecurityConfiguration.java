@@ -42,7 +42,6 @@ import static org.springframework.security.oauth2.core.AuthorizationGrantType.AU
 import static org.springframework.security.oauth2.core.AuthorizationGrantType.CLIENT_CREDENTIALS;
 import static org.springframework.security.oauth2.core.ClientAuthenticationMethod.CLIENT_SECRET_BASIC;
 import static org.springframework.security.oauth2.core.oidc.OidcScopes.OPENID;
-import static org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat.REFERENCE;
 
 @Configuration
 public class SecurityConfiguration {
@@ -62,15 +61,11 @@ public class SecurityConfiguration {
     @Order(2)
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
+                //.csrf(AbstractHttpConfigurer::disable)
                 .formLogin(withDefaults())
                 .authorizeHttpRequests(config -> config
                         .anyRequest().permitAll()
                 )
-                .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> {
-                    httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint((request, response, authException) -> {
-                        System.out.println(authException);
-                    });
-                })
                 .build();
     }
 
@@ -102,8 +97,8 @@ public class SecurityConfiguration {
                 .clientAuthenticationMethod(CLIENT_SECRET_BASIC)
                 //.clientAuthenticationMethod(NONE)
                 .authorizationGrantType(AUTHORIZATION_CODE)
-                .authorizationGrantType(CLIENT_CREDENTIALS)
-                .redirectUri("https://localhost")
+                //.authorizationGrantType(CLIENT_CREDENTIALS)
+                .redirectUri("http://hcf:8080/login/oauth2/code/spring")
                 .scope(OPENID)
                 .tokenSettings(TokenSettings.builder()
                         //.accessTokenFormat(REFERENCE) // opaque token

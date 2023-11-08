@@ -4,11 +4,11 @@ server:
       timeout: 3600s
       cookie:
         max-age: 3600s
-  ssl:
-    key-store-password: password
-    key-store: classpath:certificate.p12
-    key-store-type: PKCS12
-  port: 443
+#  ssl:
+#    key-store-password: password
+#    key-store: classpath:certificate.p12
+#    key-store-type: PKCS12
+#  port: 443
 spring:
   datasource:
     username: admin
@@ -30,8 +30,10 @@ spring:
         registration:
           spring:
             client-id: training-client
-            client-secret: secret
             authorization-grant-type: authorization_code
+            client-secret: secret
+            client-authentication-method: client_secret_basic
+            redirect-uri: "http://hcf:8080/login/oauth2/code/{registrationId}" #http://localhost:8080/login/oauth2/code/spring
             scope:
               - openid
         provider:
