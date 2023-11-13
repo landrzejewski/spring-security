@@ -20,7 +20,7 @@ import java.util.Map;
 
 import static org.springframework.security.core.context.SecurityContextHolder.MODE_INHERITABLETHREADLOCAL;
 
-@EnableWebSecurity(debug = true)
+// @EnableWebSecurity(debug = true)
 @Configuration
 public class SecurityConfiguration {
 

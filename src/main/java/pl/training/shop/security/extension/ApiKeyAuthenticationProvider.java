@@ -30,7 +30,7 @@ public class ApiKeyAuthenticationProvider implements AuthenticationProvider {
         if (authentication instanceof ApiKeyAuthentication apiKeyAuthentication) {
             var key = apiKeyAuthentication.getKey();
             if (this.apiKey.equals(key)) {
-                return new ApiKeyAuthentication(apiKey, DEFAULT_ROLES, true);
+                return new ApiKeyAuthentication("", DEFAULT_ROLES, true);
             } else {
                 throw new BadCredentialsException("Invalid api key");
             }
