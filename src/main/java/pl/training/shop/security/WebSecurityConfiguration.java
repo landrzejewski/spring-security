@@ -1,15 +1,21 @@
 package pl.training.shop.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import pl.training.shop.security.extension.ApiKeyAuthenticationFilter;
+import pl.training.shop.security.extension.ApiKeyAuthenticationProvider;
 import pl.training.shop.security.extension.CustomEntryPoint;
 import pl.training.shop.security.users.JpaUserDetailsServiceAdapter;
 
@@ -18,6 +24,17 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity(debug = true)
 @Configuration
 public class WebSecurityConfiguration {
+
+    // Opcjonalnie - providers są rejestrowani automatycznie jeśli są skonfigurowane jako beany
+    /*@Autowired
+    public void configure(AuthenticationManagerBuilder builder, UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+        var daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
+
+        builder.authenticationProvider(daoAuthenticationProvider);
+        builder.authenticationProvider(new ApiKeyAuthenticationProvider());
+    }*/
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity,
