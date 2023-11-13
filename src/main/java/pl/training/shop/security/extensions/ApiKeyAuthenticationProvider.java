@@ -1,4 +1,4 @@
-package pl.training.shop.security.extension;
+package pl.training.shop.security.extensions;
 
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;

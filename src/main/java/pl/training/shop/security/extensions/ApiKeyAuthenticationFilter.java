@@ -1,4 +1,4 @@
-package pl.training.shop.security.extension;
+package pl.training.shop.security.extensions;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -7,9 +7,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import pl.training.shop.security.extension.ApiKeyAuthenticationFilter;
-import pl.training.shop.security.extension.CustomEntryPoint;
-import pl.training.shop.security.users.JpaUserDetailsServiceAdapter;
+import pl.training.shop.security.extensions.ApiKeyAuthenticationFilter;
+import pl.training.shop.security.extensions.CustomEntryPoint;
 
 @EnableWebSecurity(debug = true)
 @Configuration
