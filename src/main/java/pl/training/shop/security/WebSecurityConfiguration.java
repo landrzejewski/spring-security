@@ -28,11 +28,11 @@ public class WebSecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity,
-                                                   ApiKeyAuthenticationFilter apiKeyAuthenticationFilter,
-                                                   JpaUserDetailsServiceAdapter userDetailsService) throws Exception {
+                                                   ApiKeyAuthenticationFilter apiKeyAuthenticationFilter
+                                                   /*JpaUserDetailsServiceAdapter userDetailsService*/) throws Exception {
         return httpSecurity
                 .addFilterAfter(apiKeyAuthenticationFilter, BasicAuthenticationFilter.class)
-                .userDetailsService(userDetailsService)
+                //.userDetailsService(userDetailsService)
                 .authorizeHttpRequests(config -> config
                                 .requestMatchers("/api/tokens").permitAll()
                                 .requestMatchers("/login.html").permitAll()
