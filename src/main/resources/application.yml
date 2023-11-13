@@ -22,3 +22,4 @@ spring:
 logging:
   level:
     org.javamoney.moneta: OFF
+main-password: admin

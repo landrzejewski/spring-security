@@ -8,4 +8,7 @@ public interface JpaPaymentRepository extends JpaRepository<PaymentEntity, Strin
 
     Page<PaymentEntity> findByStatus(String status, Pageable pageable);
 
+     /*@Query("select p from Payment p where p.status = :status and p.owner=?#{authentication.name}")
+   List<PaymentEntity> findWithStatusSecured(String status);*/
+
 }
