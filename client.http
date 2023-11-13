@@ -19,8 +19,8 @@ GET http://localhost:8080/api/payments/started?pageSize=10
 Accept: application/json
 Content-Type: application/json
 #Authorization: Basic YWRtaW46YWRtaW4=
-#Authorization: Basic YWRtaW5AdHJhaW5pbmcucGw6YWRtaW4=
-Authorization: API_KEY 123
+Authorization: Basic YWRtaW5AdHJhaW5pbmcucGw6YWRtaW4=
+#Authorization: API_KEY 123
 
 ###
 
