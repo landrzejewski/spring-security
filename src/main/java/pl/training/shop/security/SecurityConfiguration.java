@@ -3,10 +3,15 @@ package pl.training.shop.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
+
+import javax.sql.DataSource;
 
 @Configuration
 public class SecurityConfiguration {
@@ -39,15 +44,29 @@ public class SecurityConfiguration {
         return NoOpPasswordEncoder.getInstance();
     }
 
-    @Bean
-    public UserDetailsManager userDetailsManager() {
-        var user = User
-                .withUsername("admin")
-                .password("admin")
-                .roles("ADMIN")
-                .authorities("create", "read")
-                .build();
+    private final UserDetails user = User
+            .withUsername("admin")
+            .password("admin")
+            .roles("ADMIN")
+            .authorities("create", "read")
+            .build();
+
+    /*@Bean
+    public UserDetailsService userDetailsService() {
+        // return username -> user;
         return new InMemoryUserDetailsManager(user);
+    }*/
+
+    @Bean
+    public UserDetailsManager userDetailsManager(DataSource dataSource) {
+        //return new InMemoryUserDetailsManager(user);
+
+        // return new JdbcUserDetailsManager(dataSource);
+
+        var manager = new JdbcUserDetailsManager(dataSource);
+        manager.setUsersByUsernameQuery("select username, password, enabled from users where username = ?");
+        manager.setAuthoritiesByUsernameQuery("select username, authority from authorities where username = ?");
+        return manager;
     }
 
 }
