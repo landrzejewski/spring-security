@@ -1,4 +1,4 @@
-POST http://localhost:8080/api/payments
+POST https://localhost/api/payments
 Accept: application/json
 Content-Type: application/json
 
@@ -9,13 +9,13 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:8080/api/payments/bc8730dd-1dd6-4d9d-9809-04e7f7629577
+GET  https://localhost/api/payments/bc8730dd-1dd6-4d9d-9809-04e7f7629577
 Accept: application/json
 Content-Type: application/json
 
 ###
 
-GET http://localhost:8080/api/payments/started?pageSize=10
+GET  https://localhost/api/payments/started?pageSize=10
 Accept: application/json
 Content-Type: application/json
 #Authorization: Basic YWRtaW46YWRtaW4=
@@ -24,16 +24,16 @@ Authorization: API_KEY 123
 
 ###
 
-GET http://localhost:8080/api/users/me
+GET  https://localhost/api/users/me
 Accept: application/json
 Content-Type: application/json
-Authorization: Basic YWRtaW5AdHJhaW5pbmcucGw6YWRtaW4=
+#Authorization: Basic YWRtaW5AdHJhaW5pbmcucGw6YWRtaW4=
 #Authorization: API_KEY 123
-#Authorization: bearer {{token}}
+Authorization: bearer {{token}}
 
 ###
 
-POST http://localhost:8080/api/tokens
+POST  https://localhost/api/tokens
 Accept: application/json
 Content-Type: application/json
 

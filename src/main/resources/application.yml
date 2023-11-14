@@ -4,6 +4,11 @@ server:
       timeout: 3600s
       cookie:
         max-age: 3600s
+  ssl:
+    key-store-password: password
+    key-store: classpath:certificate.p12
+    key-store-type: PKCS12
+  port: 443
 spring:
   datasource:
     username: admin

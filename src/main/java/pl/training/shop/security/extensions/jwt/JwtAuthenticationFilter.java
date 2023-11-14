@@ -32,16 +32,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             var token = authorizationHeader.replace(TOKEN_PREFIX, EMPTY);
             var jwtAuthentication = new JwtAuthentication(token);
             try {
-                var authentication = authenticationConfiguration.getAuthenticationManager()
+                var resultAuthentication = authenticationConfiguration.getAuthenticationManager()
                         .authenticate(jwtAuthentication);
                 var securityContext = SecurityContextHolder.createEmptyContext();
-                securityContext.setAuthentication(authentication);
+                securityContext.setAuthentication(resultAuthentication);
                 SecurityContextHolder.setContext(securityContext);
                 filterChain.doFilter(request, response);
             } catch (AuthenticationException exception) {
                 response.setStatus(SC_UNAUTHORIZED);
             } catch (Exception exception) {
-                throw new RuntimeException(exception.getCause());
+                throw new ServletException(exception.getCause());
             }
         }
         filterChain.doFilter(request, response);
