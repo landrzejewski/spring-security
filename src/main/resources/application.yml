@@ -38,6 +38,7 @@ spring:
 #          github:
 #            client-id: e835ba0a3de29ec84b8f
 #            client-secret: 6f800fcc09302ce69c48e7c7ca10baa5fbc67636
+#            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
         provider:
           keycloak:
             issuer-uri: http://localhost:8100/realms/training
