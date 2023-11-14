@@ -7,6 +7,9 @@ import org.springframework.security.config.annotation.web.configurers.oauth2.cli
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AndRequestMatcher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.client.RestTemplate;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.IF_REQUIRED;
 
@@ -23,11 +26,16 @@ public class SecurityConfiguration {
                         .jwt(this::jwtConfigurer)
                 )
                 .oauth2Login(config -> config.userInfoEndpoint(this::userInfoCustomizer))
-                .authorizeHttpRequests(config -> config
-                        .anyRequest().authenticated()
+                .logout(config -> config
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout.html"))
+                        .addLogoutHandler(new KeycloakLogoutHandler(new RestTemplate()))
+                        .logoutSuccessUrl("/index.html")
                 )
                 .sessionManagement(config -> config
                         .sessionCreationPolicy(IF_REQUIRED)
+                )
+                .authorizeHttpRequests(config -> config
+                        .anyRequest().authenticated()
                 )
                 .build();
     }
