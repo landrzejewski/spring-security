@@ -49,3 +49,4 @@ client_id=training-client&grant_type=refresh_token&refresh_token={{ refreshToken
     client.global.set('token', response.body.access_token);
     client.global.set('refreshToken', response.body.refresh_token);
 %}
+

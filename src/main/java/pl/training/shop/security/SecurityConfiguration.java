@@ -19,6 +19,7 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        // https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/multitenancy.html
         var authenticationManagerResolver = new JwtIssuerAuthenticationManagerResolver
                 ("http://localhost:8100/realms/training");
         return httpSecurity
@@ -26,8 +27,8 @@ public class SecurityConfiguration {
                         .ignoringRequestMatchers("/api/**")
                 )
                 .oauth2ResourceServer(config -> config
-                        //.jwt(this::jwtConfigurer)
-                        .authenticationManagerResolver(authenticationManagerResolver)
+                        .jwt(this::jwtConfigurer)
+                        //.authenticationManagerResolver(authenticationManagerResolver)
                 )
                 .oauth2Login(config -> config.userInfoEndpoint(this::userInfoCustomizer))
                 .logout(config -> config
