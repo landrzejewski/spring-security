@@ -20,30 +20,7 @@ Authorization: Basic dXNlcjpkZjMxZjA5MC1hM2U2LTRlZWEtYTQ3NC04OGY3ODIzZTk1MGU=
 GET https://localhost/api/payments/started?pageSize=10
 Accept: application/json
 Content-Type: application/json
-
-###
-
-GET https://localhost/api/users/me
-Accept: application/json
-Content-Type: application/json
-#Authorization: SECRET admin
-#Authorization: Basic YWRtaW5AdHJhaW5pbmcucGw6YWRtaW4=
-Authorization: bearer {{token}}
-
-###
-
-POST https://localhost/api/tokens
-Accept: application/json
-Content-Type: application/json
-
-{
-  "login": "admin@training.pl",
-  "password": "admin"
-}
-
-> {%
-    client.global.set('token', response.body.token);
-%}
+Authorization: Bearer {{token}}
 
 ###
 
