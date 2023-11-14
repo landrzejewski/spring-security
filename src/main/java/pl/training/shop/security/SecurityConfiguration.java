@@ -6,6 +6,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.client.OAuth2LoginConfigurer;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtIssuerAuthenticationManagerResolver;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AndRequestMatcher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -18,12 +19,15 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        var authenticationManagerResolver = new JwtIssuerAuthenticationManagerResolver
+                ("http://localhost:8100/realms/training");
         return httpSecurity
                 .csrf(config -> config
                         .ignoringRequestMatchers("/api/**")
                 )
                 .oauth2ResourceServer(config -> config
-                        .jwt(this::jwtConfigurer)
+                        //.jwt(this::jwtConfigurer)
+                        .authenticationManagerResolver(authenticationManagerResolver)
                 )
                 .oauth2Login(config -> config.userInfoEndpoint(this::userInfoCustomizer))
                 .logout(config -> config
@@ -35,7 +39,7 @@ public class SecurityConfiguration {
                         .sessionCreationPolicy(IF_REQUIRED)
                 )
                 .authorizeHttpRequests(config -> config
-                        .anyRequest().authenticated()
+                        .anyRequest().hasRole("ADMIN")
                 )
                 .build();
     }
