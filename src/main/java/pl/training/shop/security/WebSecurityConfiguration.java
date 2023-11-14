@@ -8,8 +8,6 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -63,6 +61,7 @@ public class WebSecurityConfiguration {
                                                    ApiKeyAuthenticationFilter apiKeyAuthenticationFilter,
                                                    SecurityContextLoggingFilter securityContextLoggingFilter,
                                                    CustomCsrfTokenRepository csrfTokenRepository,
+                                                   RequestUrlAuthorizationManager requestUrlAuthorizationManager,
                                                    JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         return httpSecurity
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -94,14 +93,12 @@ public class WebSecurityConfiguration {
                                 .requestMatchers("/api/tokens").permitAll()
                                 .requestMatchers("/login.html").permitAll()
                                 .requestMatchers("/favicon.ico").permitAll()
+                                .anyRequest().access(requestUrlAuthorizationManager)
                                 //.requestMatchers("/api/payments/{id:^\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}$}")
                                     //.hasAnyRole("ADMIN", "MANAGER")
                                     //.hasAuthority("read")
                                     //.hasRole("ADMIN")
                                 //.anyRequest().access(new WebExpressionAuthorizationManager("hasAuthority('WRITE')"))
-                                //.anyRequest().access((authentication, object) -> new AuthorizationDecision(true))
-                                //.anyRequest().access(customAuthorizationManager)
-                                .anyRequest().authenticated()
                 )
                 //.httpBasic(withDefaults())
                 .httpBasic(config -> config

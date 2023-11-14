@@ -19,14 +19,14 @@ public class SecurityInitializer implements ApplicationRunner {
     public static final String USER_NAME = "admin";
     public static final String USER_ROLES = "ROLE_ADMIN,ROLE_MANAGER";
 
+    @Value("${mainPassword}")
+    private String mainPassword;
+
     private final JpaUsersRepository usersRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Value("${main-password}")
-    private String mainPassword;
-
     @Override
-    public void run(ApplicationArguments args) {
+    public void run(ApplicationArguments args) throws Exception {
         if (usersRepository.findByEmail(USER_EMAIL).isEmpty()) {
             var user = new UserEntity();
             user.setId(UUID.randomUUID().toString());

@@ -27,5 +27,4 @@ spring:
 logging:
   level:
     org.javamoney.moneta: OFF
-main-password: admin
 api-key: 123
