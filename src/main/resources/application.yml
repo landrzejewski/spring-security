@@ -30,14 +30,17 @@ spring:
         jwt:
           issuer-uri: http://localhost:8100/realms/training
       client:
-        provider:
-          keycloak:
-            issuer-uri: http://localhost:8100/realms/training
         registration:
           keycloak:
             client-id: training-client
             scope:
               - openid
+#          github:
+#            client-id: e835ba0a3de29ec84b8f
+#            client-secret: 6f800fcc09302ce69c48e7c7ca10baa5fbc67636
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8100/realms/training
 logging:
   level:
     org.javamoney.moneta: OFF
