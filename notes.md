@@ -13,9 +13,6 @@ Authentication -> Create flow (detect existing user flow, Basic flow) -> Add ste
 Identity providers -> github -> First login flow -> detect existing user flow
 
 ### Zadania
-- Zaimplementuj niestandardowy AuthorizationManager, tak aby było można autoryzować
-  dostęp do zasobów webowych na podstawie konfiguracji ładowanej z bazy (rola/url)
-
 - Dodaj filtr logujący informację zawarte w SecurityContext. W przypadku
   kiedy użytkownik nie jest zalogowany, filtr powinien o tym poinformować
 
@@ -25,6 +22,12 @@ Identity providers -> github -> First login flow -> detect existing user flow
 ```
 public static final Algorithm ALGORITHM = Algorithm.HMAC256("secret");
 ```
+
+- Zaimplementuj niestandardowy AuthorizationManager, tak aby było można autoryzować
+  dostęp do zasobów webowych na podstawie konfiguracji ładowanej z bazy (rola/url)
+
+- Napisz aspekt, ograniczający dostęp do wybranych metod beanów - pozytywna autoryzacja w określonych godzinach
+  wymaga jednej ze wskazanych ról
 
 - Zaszyfruj przykładowe dane np. w formacie csv. Zaimplementuj usługę REST, która będzie ładować zaszyfrowane
   wcześniej dane, deszyfrować je oraz filtrować ze względu na posiadaną rolę
