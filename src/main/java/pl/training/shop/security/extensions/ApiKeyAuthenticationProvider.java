@@ -8,12 +8,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.stereotype.Component;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Component
+// @Component
 public class ApiKeyAuthenticationProvider implements AuthenticationProvider {
 
     private static final Set<GrantedAuthority> DEFAULT_ROLES = Set.of("ROLE_ADMIN")

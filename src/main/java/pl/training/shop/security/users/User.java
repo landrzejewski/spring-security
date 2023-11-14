@@ -30,10 +30,9 @@ public class User implements UserDetails, CredentialsContainer {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        var a = Arrays.stream(roles.split(ROLES_SEPARATOR))
+        return Arrays.stream(roles.split(ROLES_SEPARATOR))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toSet());
-        return a;
     }
 
     @Override

@@ -19,13 +19,29 @@ GET http://localhost:8080/api/payments/started?pageSize=10
 Accept: application/json
 Content-Type: application/json
 #Authorization: Basic YWRtaW46YWRtaW4=
-Authorization: Basic YWRtaW5AdHJhaW5pbmcucGw6YWRtaW4=
-#Authorization: API_KEY 123
+#Authorization: Basic YWRtaW5AdHJhaW5pbmcucGw6YWRtaW4=
+Authorization: API_KEY 123
 
 ###
 
 GET http://localhost:8080/api/users/me
 Accept: application/json
 Content-Type: application/json
-#Authorization: Basic YWRtaW5AdHJhaW5pbmcucGw6YWRtaW4=
-Authorization: API_KEY 123
+Authorization: Basic YWRtaW5AdHJhaW5pbmcucGw6YWRtaW4=
+#Authorization: API_KEY 123
+#Authorization: bearer {{token}}
+
+###
+
+POST http://localhost:8080/api/tokens
+Accept: application/json
+Content-Type: application/json
+
+{
+  "login": "admin@training.pl",
+  "password": "admin"
+}
+
+> {%
+    client.global.set('token', response.body.token);
+%}
