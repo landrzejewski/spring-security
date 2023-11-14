@@ -38,6 +38,7 @@ public class KeycloakGrantedAuthoritiesMapper implements GrantedAuthoritiesMappe
         });
         return grantedAuthorities.stream()
                 .map(role -> ROLE_PREFIX + role)
+                .map(String::toUpperCase)
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toSet());
     }
