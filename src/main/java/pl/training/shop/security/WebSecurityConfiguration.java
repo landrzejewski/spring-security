@@ -92,7 +92,6 @@ public class WebSecurityConfiguration {
                                 .requestMatchers("/api/tokens").permitAll()
                                 .requestMatchers("/login.html").permitAll()
                                 .requestMatchers("/favicon.ico").permitAll()
-                                .anyRequest().access(new CustomAuthorizationManager())
                                 //.requestMatchers("/api/payments/{id:^\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}$}")
                                     //.hasAnyRole("ADMIN", "MANAGER")
                                     //.hasAuthority("read")
@@ -100,7 +99,7 @@ public class WebSecurityConfiguration {
                                 //.anyRequest().access(new WebExpressionAuthorizationManager("hasAuthority('WRITE')"))
                                 //.anyRequest().access((authentication, object) -> new AuthorizationDecision(true))
                                 //.anyRequest().access(customAuthorizationManager)
-                                //.anyRequest().authenticated()
+                                .anyRequest().authenticated()
                 )
                 //.httpBasic(withDefaults())
                 .httpBasic(config -> config
