@@ -1,4 +1,19 @@
-GET http://localhost:8080/api/users/me
+GET https://localhost/api/users/me
 Accept: application/json
 Content-Type: application/json
-Authorization: Basic YWRtaW5AdHJhaW5pbmcucGw6YWRtaW4=
+#Authorization: Basic YWRtaW5AdHJhaW5pbmcucGw6YWRtaW4=
+Authorization: bearer {{token}}
+
+###
+
+//@no-redirect
+//@no-cookie-jar
+POST http://localhost:8100/realms/training/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id=training-client&grant_type=password&username=admin@training.pl&password=admin
+
+> {%
+    client.global.set('token', response.body.access_token);
+    client.global.set('refreshToken', response.body.refresh_token);
+%}
