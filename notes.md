@@ -27,6 +27,7 @@ public static final Algorithm ALGORITHM = Algorithm.HMAC256("secret");
 dane powinny być przefiltrowane ze względu na treść oraz rolę użytkownika (JPA QL expressions, adnotacje).
 Dostęp do endpointów rest zabezpiecz z wykorzystaniem protokołu OpenID (Spring, Keycloak). 
 
+https://github.com/landrzejewski/clean-architecture
 
 
 https://tinyurl.com/yzc2w8jy
