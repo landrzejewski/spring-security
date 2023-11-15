@@ -17,7 +17,6 @@ public class KeycloakJwtGrantedAuthoritiesConverter implements Converter<Jwt, Fl
     private static final String ROLE_PREFIX = "ROLE_";
 
     @Override
-    @Nullable
     public Flux<GrantedAuthority> convert(Jwt source) {
         Map<String, List<String>> realm = source.getClaim(REALM_CLAIM);
         return Flux.fromStream(realm.get(ROLES_CLAIM).stream()
@@ -25,6 +24,5 @@ public class KeycloakJwtGrantedAuthoritiesConverter implements Converter<Jwt, Fl
                 .map(SimpleGrantedAuthority::new)
         );
     }
-
 
 }
