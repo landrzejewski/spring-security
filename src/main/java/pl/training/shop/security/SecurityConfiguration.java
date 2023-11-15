@@ -54,7 +54,7 @@ public class SecurityConfiguration {
 
         // Sets the location that the End-User's User Agent will be redirected to
         // after the logout has been performed at the Provider
-       //oidcLogoutSuccessHandler.setPostLogoutRedirectUri("{baseUrl}");
+       oidcLogoutSuccessHandler.setPostLogoutRedirectUri("http://127.0.0.1:8080");
 
         return oidcLogoutSuccessHandler;
     }

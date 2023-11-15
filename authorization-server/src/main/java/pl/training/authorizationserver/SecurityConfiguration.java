@@ -47,6 +47,7 @@ import static org.springframework.security.oauth2.core.AuthorizationGrantType.CL
 import static org.springframework.security.oauth2.core.ClientAuthenticationMethod.CLIENT_SECRET_BASIC;
 import static org.springframework.security.oauth2.core.oidc.OidcScopes.OPENID;
 import static org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration.applyDefaultSecurity;
+import static org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat.REFERENCE;
 
 @Configuration
 public class SecurityConfiguration {
@@ -107,9 +108,10 @@ public class SecurityConfiguration {
                 .authorizationGrantType(AUTHORIZATION_CODE)
                 .authorizationGrantType(CLIENT_CREDENTIALS)
                 .redirectUri("http://127.0.0.1:8080/login/oauth2/code/spring")
+                .postLogoutRedirectUri("http://127.0.0.1:8080")
                 .scope(OPENID)
                 .tokenSettings(TokenSettings.builder()
-                        //.accessTokenFormat(REFERENCE) // opaque token
+                        .accessTokenFormat(REFERENCE) // opaque token
                         .accessTokenTimeToLive(Duration.ofHours(1))
                         .build()
                 )
@@ -120,7 +122,8 @@ public class SecurityConfiguration {
                 .build();
 
         // verification and revoking for opaque tokens
-        var paymentsResourceServerClient = RegisteredClient.withId(UUID.randomUUID().toString())
+        var paymentsResourceServerClient = RegisteredClient
+                .withId(nextId())
                 .clientId("payments_resource_server")
                 .clientSecret(passwordEncoder().encode("secret"))
                 .clientAuthenticationMethod(CLIENT_SECRET_BASIC)

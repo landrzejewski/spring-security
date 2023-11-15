@@ -80,10 +80,10 @@ Authorization: Basic dHJhaW5pbmctY2xpZW50OnNlY3JldA==
 %}
 
 ### opaue token validation
-POST http://localhost:8090/oauth2/introspect?token=ti6isRBrvvB3sWWHwRmgQm4NTt-wghCGMU4Z_WHNDZ45ABP27xFscuXmFcKcQtduffYTjVHJ9qzsMSpRgmbpDyzkkBXQz2daLejDJczTMwKrYE2bAc8mChbBpjdLoqrp
+POST http://localhost:8090/oauth2/introspect?token=4_47evHZ6Ifitfv47QV5Y0BxE88cHC2tAAVabueztt8UxVuNIG8Ft9FjQjS4KeBsG9X6ZWiWskD5qDPwuSEM_ASjjyr0tcKdlpR46MtHKUtrKjSCAV9ziY0Yfpb5sGHY
 Authorization: Basic dHJhaW5pbmctY2xpZW50OnNlY3JldA==
 
 ### token revoke
 
-POST http://localhost:8090/oauth2/revoke?token=ti6isRBrvvB3sWWHwRmgQm4NTt-wghCGMU4Z_WHNDZ45ABP27xFscuXmFcKcQtduffYTjVHJ9qzsMSpRgmbpDyzkkBXQz2daLejDJczTMwKrYE2bAc8mChbBpjdLoqrp
+POST http://localhost:8090/oauth2/revoke?token=4_47evHZ6Ifitfv47QV5Y0BxE88cHC2tAAVabueztt8UxVuNIG8Ft9FjQjS4KeBsG9X6ZWiWskD5qDPwuSEM_ASjjyr0tcKdlpR46MtHKUtrKjSCAV9ziY0Yfpb5sGHY
 Authorization: Basic dHJhaW5pbmctY2xpZW50OnNlY3JldA==
