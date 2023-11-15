@@ -33,7 +33,7 @@ GET http://localhost:8090/.well-known/openid-configuration
 
 ###
 
-GET http://localhost:8090/oauth2/authorize?response_type=code&client_id=training-client&scope=openid&redirect_uri=http://localhost:8080/oauth2/authorization/spring&code_challenge=BvLDxPL54yB0LaXR_soFXznAPL8tIEkARyONlxzE2Y4&code_challenge_method=S256
+GET http://localhost:8090/oauth2/authorize?response_type=code&client_id=training-client&scope=openid&redirect_uri=http://127.0.0.1:8080/oauth2/authorization/spring&code_challenge=BvLDxPL54yB0LaXR_soFXznAPL8tIEkARyONlxzE2Y4&code_challenge_method=S256
 
 # response_type – this request parameter specifies to the authorization server that
 # the client wants to use the authorization code grant type. Remember that a client might

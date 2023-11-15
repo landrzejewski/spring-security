@@ -2,5 +2,5 @@ server:
   port: 8090
 logging:
   level:
-    org.springframework.security: DEBUG
-    root: debug
+    org.springframework.security: trace
+    root: trace
