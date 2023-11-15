@@ -26,3 +26,7 @@ public static final Algorithm ALGORITHM = Algorithm.HMAC256("secret");
 - Zaimplementuj usługę rest, zwracającą dane z zaszyfrowanych plików csv. Przed zwróceniem 
 dane powinny być przefiltrowane ze względu na treść oraz rolę użytkownika (JPA QL expressions, adnotacje).
 Dostęp do endpointów rest zabezpiecz z wykorzystaniem protokołu OpenID (Spring, Keycloak). 
+
+
+
+https://tinyurl.com/yzc2w8jy
