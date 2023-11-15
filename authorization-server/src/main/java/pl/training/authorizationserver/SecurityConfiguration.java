@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -37,6 +39,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.time.Duration;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.oauth2.core.AuthorizationGrantType.AUTHORIZATION_CODE;
@@ -67,6 +70,7 @@ public class SecurityConfiguration {
     @Order(2)
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
+                .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(withDefaults())
                 .authorizeHttpRequests(config -> config
                         .anyRequest().permitAll()
@@ -105,6 +109,7 @@ public class SecurityConfiguration {
                 .redirectUri("http://127.0.0.1:8080/login/oauth2/code/spring")
                 .scope(OPENID)
                 .tokenSettings(TokenSettings.builder()
+                        //.accessTokenFormat(REFERENCE) // opaque token
                         .accessTokenTimeToLive(Duration.ofHours(1))
                         .build()
                 )
@@ -113,7 +118,16 @@ public class SecurityConfiguration {
                         .build()
                 )
                 .build();
-        return new InMemoryRegisteredClientRepository(trainingClient);
+
+        // verification and revoking for opaque tokens
+        var paymentsResourceServerClient = RegisteredClient.withId(UUID.randomUUID().toString())
+                .clientId("payments_resource_server")
+                .clientSecret(passwordEncoder().encode("secret"))
+                .clientAuthenticationMethod(CLIENT_SECRET_BASIC)
+                .authorizationGrantType(CLIENT_CREDENTIALS)
+                .build();
+
+        return new InMemoryRegisteredClientRepository(trainingClient, paymentsResourceServerClient);
     }
 
     @Bean
@@ -125,10 +139,21 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public OAuth2TokenCustomizer<JwtEncodingContext> jwtEncodingContextOAuth2TokenCustomizer() {
-        return  context -> context
-                        .getClaims()
-                .claim(ROLES_CLAIM, Set.of("ROLE_ADMIN"));
+    public OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer() {
+        return context -> {
+            var claims = context.getClaims();
+            claims.claim("zone", "secured");
+            if (context.getAuthorizationGrantType().equals(CLIENT_CREDENTIALS)) {
+                claims.claim(ROLES_CLAIM, Set.of("ROLE_ADMIN"));
+            } else {
+                var authorities = context.getPrincipal()
+                        .getAuthorities()
+                        .stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.toSet());
+                claims.claim(ROLES_CLAIM, authorities);
+            }
+        };
     }
 
     @Bean
