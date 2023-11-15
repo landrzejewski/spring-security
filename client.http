@@ -1,3 +1,5 @@
+//@no-redirect
+//@no-cookie-jar
 GET https://localhost/api/users/me
 Accept: application/json
 Content-Type: application/json
