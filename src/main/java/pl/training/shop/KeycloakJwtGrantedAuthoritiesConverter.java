@@ -1,7 +1,6 @@
 package pl.training.shop;
 
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -19,10 +18,10 @@ public class KeycloakJwtGrantedAuthoritiesConverter implements Converter<Jwt, Fl
     @Override
     public Flux<GrantedAuthority> convert(Jwt source) {
         Map<String, List<String>> realm = source.getClaim(REALM_CLAIM);
-        return Flux.fromStream(realm.get(ROLES_CLAIM).stream()
+        var authorities = realm.get(ROLES_CLAIM).stream()
                 .map(role -> ROLE_PREFIX + role)
-                .map(SimpleGrantedAuthority::new)
-        );
+                .map(SimpleGrantedAuthority::new);
+        return Flux.fromStream(authorities);
     }
 
 }
