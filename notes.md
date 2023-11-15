@@ -30,4 +30,3 @@ Dostęp do endpointów rest zabezpiecz z wykorzystaniem protokołu OpenID (Sprin
 https://github.com/landrzejewski/clean-architecture
 
 
-https://tinyurl.com/yzc2w8jy
