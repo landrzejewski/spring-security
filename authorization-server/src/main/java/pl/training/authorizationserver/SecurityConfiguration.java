@@ -5,7 +5,7 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
-import org.springframework.context.annotation.Bean;
+import org.springframewóork.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -46,19 +46,8 @@ import static org.springframework.security.oauth2.core.oidc.OidcScopes.OPENID;
 @Configuration
 public class SecurityConfiguration {
 
-    @Bean
-    @Order(1)
-    public SecurityFilterChain asFilterChain(HttpSecurity http) throws Exception {
-        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
-        http.getConfigurer(OAuth2AuthorizationServerConfigurer.class).oidc(withDefaults());
-        http.exceptionHandling(config -> config
-                .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
-        );
-        return http.build();
-    }
 
     @Bean
-    @Order(2)
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
                 //.csrf(AbstractHttpConfigurer::disable)
@@ -88,36 +77,6 @@ public class SecurityConfiguration {
         return UUID.randomUUID().toString();
     }
 
-    @Bean
-    public RegisteredClientRepository registeredClientRepository() {
-        var trainingClient = RegisteredClient
-                .withId(nextId())
-                .clientId("training-client")
-                .clientSecret(passwordEncoder().encode("secret"))
-                .clientAuthenticationMethod(CLIENT_SECRET_BASIC)
-                //.clientAuthenticationMethod(NONE)
-                .authorizationGrantType(AUTHORIZATION_CODE)
-                .authorizationGrantType(CLIENT_CREDENTIALS)
-                .redirectUri("http://127.0.0.1:8080/login/oauth2/code/spring") // 127.0.0.1 wymagane kiedy auth server i client są na tym samym hoście
-                .scope(OPENID)
-                .tokenSettings(TokenSettings.builder()
-                        //.accessTokenFormat(REFERENCE) // opaque token
-                        .accessTokenTimeToLive(Duration.ofMinutes(1))
-                        .build())
-                .clientSettings(ClientSettings.builder()
-                        .requireProofKey(false)
-                        .build())
-                .build();
-
-        // verification and revoking
-        var paymentsResourceServerClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                .clientId("payments_resource_server")
-                .clientSecret(passwordEncoder().encode("secret"))
-                .clientAuthenticationMethod(CLIENT_SECRET_BASIC)
-                .authorizationGrantType(CLIENT_CREDENTIALS)
-                .build();
-        return new InMemoryRegisteredClientRepository(trainingClient, paymentsResourceServerClient);
-    }
 
     @Bean
     public JWKSource<SecurityContext> jwkSource() throws NoSuchAlgorithmException {
@@ -132,31 +91,6 @@ public class SecurityConfiguration {
                 .build();
         var jwkSet = new JWKSet(rsaKey);
         return new ImmutableJWKSet<>(jwkSet);
-    }
-
-    @Bean
-    public AuthorizationServerSettings authorizationServerSettings() {
-        return AuthorizationServerSettings.builder()
-                //.issuer("http://localhost:8090")
-                .build();
-    }
-
-    @Bean
-    public OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer() {
-        return context -> {
-            var claims = context.getClaims();
-            claims.claim("zone", "secured");
-            if (context.getAuthorizationGrantType().equals(CLIENT_CREDENTIALS)) {
-                claims.claim("authorities", Set.of("ROLE_ADMIN"));
-            } else {
-                var authorities = context.getPrincipal()
-                        .getAuthorities()
-                        .stream()
-                        .map(GrantedAuthority::getAuthority)
-                        .collect(Collectors.toSet());
-                claims.claim("authorities", authorities);
-            }
-        };
     }
 
 }
