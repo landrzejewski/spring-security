@@ -28,11 +28,6 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableReactiveMethodSecurity
 @Configuration
 public class SecurityConfiguration {
-
-    private static final String REALM_CLAIM = "realm_access";
-    private static final String ROLES_CLAIM = "roles";
-    private static final String ROLE_PREFIX = "ROLE_";
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
